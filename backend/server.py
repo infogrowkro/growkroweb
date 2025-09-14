@@ -435,6 +435,217 @@ async def search_creators(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error searching creators: {str(e)}")
 
+# Payment Routes
+@app.post("/api/payments/create-order", response_model=PaymentOrderResponse)
+async def create_payment_order(request: PaymentOrderRequest):
+    """Create Razorpay payment order"""
+    try:
+        if not razorpay_client:
+            raise HTTPException(status_code=500, detail="Payment system not configured")
+        
+        # Determine amount based on payment type
+        amount = 0
+        description = ""
+        
+        if request.payment_type == "subscription":
+            amount = PAYMENT_PRICING["subscription"]["annual"]
+            description = PAYMENT_PRICING["subscription"]["description"]
+        elif request.payment_type == "verification":
+            amount = PAYMENT_PRICING["verification"]["profile"]
+            description = PAYMENT_PRICING["verification"]["description"]
+        elif request.payment_type == "highlight_package" and request.package_id:
+            if request.package_id in PAYMENT_PRICING["highlight_package"]:
+                amount = PAYMENT_PRICING["highlight_package"][request.package_id]
+                description = f"{request.package_id.title()} Highlight Package"
+            else:
+                raise HTTPException(status_code=400, detail="Invalid package ID")
+        elif request.amount:
+            amount = request.amount
+            description = f"Custom payment - {request.payment_type}"
+        else:
+            raise HTTPException(status_code=400, detail="Invalid payment request")
+        
+        # Create Razorpay order
+        order_data = {
+            "amount": amount,
+            "currency": "INR",
+            "payment_capture": 1,
+            "notes": {
+                "payment_type": request.payment_type,
+                "package_id": request.package_id,
+                "creator_id": request.creator_id,
+                "description": description
+            }
+        }
+        
+        razorpay_order = razorpay_client.order.create(order_data)
+        
+        # Create payment transaction record
+        transaction = PaymentTransaction(
+            order_id=razorpay_order["id"],
+            payment_type=request.payment_type,
+            amount=amount,
+            status="created",
+            payment_status="created",
+            metadata={
+                "package_id": request.package_id,
+                "creator_id": request.creator_id,
+                "description": description
+            }
+        )
+        
+        transaction_dict = transaction.dict()
+        transaction_dict = prepare_for_mongo(transaction_dict)
+        await db.payment_transactions.insert_one(transaction_dict)
+        
+        return PaymentOrderResponse(
+            order_id=razorpay_order["id"],
+            amount=amount,
+            currency="INR",
+            key_id=RAZORPAY_KEY_ID
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creating payment order: {str(e)}")
+
+@app.post("/api/payments/verify")
+async def verify_payment(verification: PaymentVerificationRequest):
+    """Verify Razorpay payment"""
+    try:
+        if not razorpay_client:
+            raise HTTPException(status_code=500, detail="Payment system not configured")
+        
+        # Verify payment signature
+        params_dict = {
+            'razorpay_order_id': verification.order_id,
+            'razorpay_payment_id': verification.payment_id,
+            'razorpay_signature': verification.signature
+        }
+        
+        try:
+            razorpay_client.utility.verify_payment_signature(params_dict)
+        except:
+            raise HTTPException(status_code=400, detail="Invalid payment signature")
+        
+        # Update transaction record
+        transaction = await db.payment_transactions.find_one({"order_id": verification.order_id})
+        if not transaction:
+            raise HTTPException(status_code=404, detail="Payment transaction not found")
+        
+        # Update payment status
+        await db.payment_transactions.update_one(
+            {"order_id": verification.order_id},
+            {"$set": {
+                "payment_id": verification.payment_id,
+                "status": "completed",
+                "payment_status": "captured",
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        # Process the payment based on type
+        await process_payment_success(transaction, verification.payment_id)
+        
+        return {"status": "success", "message": "Payment verified successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error verifying payment: {str(e)}")
+
+async def process_payment_success(transaction: Dict, payment_id: str):
+    """Process successful payment and update user/creator records"""
+    try:
+        payment_type = transaction.get("payment_type")
+        metadata = transaction.get("metadata", {})
+        
+        if payment_type == "subscription":
+            # Update user subscription status
+            user_email = transaction.get("user_email")
+            if user_email:
+                # In a real app, you'd update user record
+                # For demo, this would integrate with user management
+                pass
+                
+        elif payment_type == "verification":
+            # Update creator verification status
+            creator_id = metadata.get("creator_id")
+            if creator_id:
+                await db.creators.update_one(
+                    {"id": creator_id},
+                    {"$set": {
+                        "verification_status": True,
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                
+        elif payment_type == "highlight_package":
+            # Update creator highlight package
+            creator_id = metadata.get("creator_id")
+            package_id = metadata.get("package_id")
+            if creator_id and package_id:
+                await db.creators.update_one(
+                    {"id": creator_id},
+                    {"$set": {
+                        "highlight_package": package_id,
+                        "updated_at": datetime.now(timezone.utc).isoformat()
+                    }}
+                )
+                
+    except Exception as e:
+        print(f"Error processing payment success: {str(e)}")
+
+@app.get("/api/payments/transaction/{order_id}")
+async def get_transaction_status(order_id: str):
+    """Get payment transaction status"""
+    try:
+        transaction = await db.payment_transactions.find_one({"order_id": order_id})
+        if not transaction:
+            raise HTTPException(status_code=404, detail="Transaction not found")
+        
+        parsed_transaction = parse_from_mongo(transaction)
+        return PaymentTransaction(**parsed_transaction)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching transaction: {str(e)}")
+
+@app.get("/api/payments/pricing")
+async def get_payment_pricing():
+    """Get payment pricing information"""
+    try:
+        return {
+            "subscription": {
+                "annual": {
+                    "amount": PAYMENT_PRICING["subscription"]["annual"],
+                    "amount_inr": PAYMENT_PRICING["subscription"]["annual"] / 100,
+                    "name": PAYMENT_PRICING["subscription"]["name"],
+                    "description": PAYMENT_PRICING["subscription"]["description"]
+                }
+            },
+            "verification": {
+                "profile": {
+                    "amount": PAYMENT_PRICING["verification"]["profile"],
+                    "amount_inr": PAYMENT_PRICING["verification"]["profile"] / 100,
+                    "name": PAYMENT_PRICING["verification"]["name"],
+                    "description": PAYMENT_PRICING["verification"]["description"]
+                }
+            },
+            "highlight_packages": {
+                package_id: {
+                    "amount": amount,
+                    "amount_inr": amount / 100,
+                    "name": f"{package_id.title()} Package"
+                }
+                for package_id, amount in PAYMENT_PRICING["highlight_package"].items()
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching pricing: {str(e)}")
+
 # Stats and Analytics Routes
 @app.get("/api/stats")
 async def get_platform_stats():
