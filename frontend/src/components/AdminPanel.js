@@ -339,38 +339,39 @@ const AdminPanel = ({ onClose }) => {
           {/* Financial Management */}
           {activeTab === 'financial' && (
             <div className="financial-management">
-              <h3>Financial Overview</h3>
+              <h3>Financial Management</h3>
               
-              <div className="revenue-stats">
+              <div className="revenue-overview">
                 <div className="stat-card">
                   <div className="stat-number">₹{revenueStats.total_revenue || 0}</div>
                   <div className="stat-label">Total Revenue</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-number">₹{revenueStats.monthly_revenue || 0}</div>
-                  <div className="stat-label">This Month</div>
+                  <div className="stat-number">₹{revenueStats.subscription_revenue || 0}</div>
+                  <div className="stat-label">Subscription Revenue</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-number">{revenueStats.total_transactions || 0}</div>
-                  <div className="stat-label">Total Transactions</div>
+                  <div className="stat-number">₹{revenueStats.verification_revenue || 0}</div>
+                  <div className="stat-label">Verification Revenue</div>
                 </div>
                 <div className="stat-card">
-                  <div className="stat-number">₹{revenueStats.average_transaction || 0}</div>
-                  <div className="stat-label">Avg Transaction</div>
+                  <div className="stat-number">₹{revenueStats.package_revenue || 0}</div>
+                  <div className="stat-label">Package Revenue</div>
                 </div>
               </div>
 
               <h4>Recent Transactions</h4>
               <div className="transactions-list">
                 {transactions.length > 0 ? (
-                  transactions.map((transaction) => (
+                  transactions.slice(0, 10).map((transaction) => (
                     <div key={transaction.id} className="transaction-item">
                       <div className="transaction-info">
-                        <span className="transaction-type">{transaction.type}</span>
-                        <span className="transaction-user">{transaction.user_name}</span>
-                        <span className="transaction-date">{new Date(transaction.created_at).toLocaleDateString()}</span>
+                        <span className="transaction-type">{transaction.payment_type}</span>
+                        <span className="transaction-amount">₹{(transaction.amount / 100).toFixed(2)}</span>
+                        <span className={`transaction-status ${transaction.status}`}>
+                          {transaction.status}
+                        </span>
                       </div>
-                      <div className="transaction-amount">₹{transaction.amount}</div>
                     </div>
                   ))
                 ) : (
@@ -383,42 +384,35 @@ const AdminPanel = ({ onClose }) => {
           {/* Content Management */}
           {activeTab === 'content' && (
             <div className="content-management">
-              <h3>Content Moderation</h3>
+              <h3>Content & Community Management</h3>
               
               <div className="content-stats">
                 <div className="stat-card">
-                  <div className="stat-number">{contentReports.total_reports || 0}</div>
-                  <div className="stat-label">Total Reports</div>
+                  <div className="stat-number">{contentReports.spam_reports || 0}</div>
+                  <div className="stat-label">Spam Reports</div>
                 </div>
-                <div className="stat-card pending">
-                  <div className="stat-number">{contentReports.pending_reports || 0}</div>
-                  <div className="stat-label">Pending Review</div>
+                <div className="stat-card">
+                  <div className="stat-number">{contentReports.flagged_profiles || 0}</div>
+                  <div className="stat-label">Flagged Profiles</div>
                 </div>
-                <div className="stat-card resolved">
-                  <div className="stat-number">{contentReports.resolved_reports || 0}</div>
-                  <div className="stat-label">Resolved</div>
+                <div className="stat-card">
+                  <div className="stat-number">{contentReports.content_violations || 0}</div>
+                  <div className="stat-label">Content Violations</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">{contentReports.pending_reviews || 0}</div>
+                  <div className="stat-label">Pending Reviews</div>
                 </div>
               </div>
 
-              <h4>Recent Reports</h4>
-              <div className="reports-list">
-                {contentReports.recent_reports?.length > 0 ? (
-                  contentReports.recent_reports.map((report) => (
-                    <div key={report.id} className="report-item">
-                      <div className="report-info">
-                        <span className="report-type">{report.type}</span>
-                        <span className="report-reason">{report.reason}</span>
-                        <span className="report-date">{new Date(report.created_at).toLocaleDateString()}</span>
-                      </div>
-                      <div className="report-actions">
-                        <button className="resolve-btn">Resolve</button>
-                        <button className="dismiss-btn">Dismiss</button>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="no-reports">No reports found</div>
-                )}
+              <div className="content-actions">
+                <h4>Moderation Actions</h4>
+                <div className="moderation-tools">
+                  <button className="moderation-btn">Review Flagged Content</button>
+                  <button className="moderation-btn">Resolve Spam Reports</button>
+                  <button className="moderation-btn">Moderate Comments</button>
+                  <button className="moderation-btn">Content Policy Settings</button>
+                </div>
               </div>
             </div>
           )}
@@ -426,41 +420,60 @@ const AdminPanel = ({ onClose }) => {
           {/* Analytics */}
           {activeTab === 'analytics' && (
             <div className="analytics-dashboard">
-              <h3>Platform Analytics</h3>
+              <h3>Analytics & Reports</h3>
               
-              <div className="analytics-grid">
-                <div className="stat-card">
-                  <div className="stat-number">{analyticsData.user_growth?.total_creators || 0}</div>
-                  <div className="stat-label">Total Creators</div>
+              <div className="analytics-sections">
+                <div className="analytics-section">
+                  <h4>User Growth</h4>
+                  <div className="analytics-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Total Creators:</span>
+                      <span className="stat-value">{analyticsData.user_growth?.total_creators || 0}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Active Creators:</span>
+                      <span className="stat-value">{analyticsData.user_growth?.active_creators || 0}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Growth Rate:</span>
+                      <span className="stat-value">{analyticsData.user_growth?.growth_rate || '0%'}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="stat-card">
-                  <div className="stat-number">{analyticsData.user_growth?.monthly_signups || 0}</div>
-                  <div className="stat-label">Monthly Signups</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-number">{analyticsData.engagement_metrics?.active_users || 0}</div>
-                  <div className="stat-label">Active Users</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-number">{analyticsData.engagement_metrics?.profile_views || 0}</div>
-                  <div className="stat-label">Profile Views</div>
-                </div>
-              </div>
 
-              <div className="growth-metrics">
-                <h4>Growth Metrics</h4>
-                <div className="metrics-list">
-                  <div className="metric-item">
-                    <span>User Retention Rate</span>
-                    <span>{analyticsData.engagement_metrics?.retention_rate || 0}%</span>
+                <div className="analytics-section">
+                  <h4>Revenue Metrics</h4>
+                  <div className="analytics-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Total Revenue:</span>
+                      <span className="stat-value">₹{analyticsData.revenue_metrics?.total_revenue || 0}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Monthly Revenue:</span>
+                      <span className="stat-value">₹{analyticsData.revenue_metrics?.monthly_revenue || 0}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Transactions:</span>
+                      <span className="stat-value">{analyticsData.revenue_metrics?.transaction_count || 0}</span>
+                    </div>
                   </div>
-                  <div className="metric-item">
-                    <span>Average Session Duration</span>
-                    <span>{analyticsData.engagement_metrics?.avg_session_duration || 0} min</span>
-                  </div>
-                  <div className="metric-item">
-                    <span>Conversion Rate</span>
-                    <span>{analyticsData.revenue_metrics?.conversion_rate || 0}%</span>
+                </div>
+
+                <div className="analytics-section">
+                  <h4>Engagement Metrics</h4>
+                  <div className="analytics-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Verified Creators:</span>
+                      <span className="stat-value">{analyticsData.engagement_metrics?.verified_creators || 0}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Premium Creators:</span>
+                      <span className="stat-value">{analyticsData.engagement_metrics?.premium_creators || 0}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Collaboration Requests:</span>
+                      <span className="stat-value">{analyticsData.engagement_metrics?.collaboration_requests || 0}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -470,114 +483,118 @@ const AdminPanel = ({ onClose }) => {
           {/* Notifications */}
           {activeTab === 'notifications' && (
             <div className="notifications-management">
-              <h3>Notification Center</h3>
+              <h3>Notifications & Communication</h3>
               
               <div className="notification-form">
                 <h4>Send Notification</h4>
                 <div className="form-group">
-                  <label>Title</label>
+                  <label>Title:</label>
                   <input
                     type="text"
                     value={notificationForm.title}
                     onChange={(e) => setNotificationForm({...notificationForm, title: e.target.value})}
                     placeholder="Notification title"
+                    className="notification-input"
                   />
                 </div>
                 <div className="form-group">
-                  <label>Message</label>
+                  <label>Message:</label>
                   <textarea
                     value={notificationForm.message}
                     onChange={(e) => setNotificationForm({...notificationForm, message: e.target.value})}
                     placeholder="Notification message"
+                    className="notification-textarea"
                     rows="4"
                   />
                 </div>
                 <div className="form-group">
-                  <label>Target</label>
+                  <label>Target:</label>
                   <select
                     value={notificationForm.target}
                     onChange={(e) => setNotificationForm({...notificationForm, target: e.target.value})}
+                    className="notification-select"
                   >
                     <option value="all">All Users</option>
-                    <option value="verified">Verified Creators</option>
-                    <option value="premium">Premium Members</option>
-                    <option value="pending">Pending Approval</option>
+                    <option value="subscribed">Subscribed Users</option>
+                    <option value="creators">All Creators</option>
+                    <option value="specific_users">Specific Users</option>
                   </select>
                 </div>
-                <button className="send-notification-btn" onClick={sendNotification}>
+                <button onClick={sendNotification} className="send-notification-btn">
                   Send Notification
                 </button>
               </div>
 
-              <h4>Notification History</h4>
               <div className="notification-history">
+                <h4>Notification History</h4>
                 {notificationHistory.length > 0 ? (
-                  notificationHistory.map((notification) => (
-                    <div key={notification.id} className="notification-item">
-                      <div className="notification-info">
-                        <h5>{notification.title}</h5>
-                        <p>{notification.message}</p>
-                        <span className="notification-meta">
-                          Sent to {notification.target} • {new Date(notification.sent_at).toLocaleDateString()}
-                        </span>
+                  <div className="history-list">
+                    {notificationHistory.map((notification) => (
+                      <div key={notification.id} className="history-item">
+                        <div className="notification-title">{notification.title}</div>
+                        <div className="notification-details">
+                          {notification.message} • Sent to {notification.target_count} users
+                        </div>
+                        <div className="notification-time">
+                          {new Date(notification.sent_at).toLocaleDateString()}
+                        </div>
                       </div>
-                      <div className="notification-stats">
-                        <span>Delivered: {notification.delivered_count}</span>
-                        <span>Opened: {notification.opened_count}</span>
-                      </div>
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 ) : (
-                  <div className="no-notifications">No notifications sent yet</div>
+                  <div className="no-history">No notifications sent yet</div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Verification Management */}
+          {/* Verification */}
           {activeTab === 'verification' && (
             <div className="verification-management">
-              <h3>Verification Management</h3>
+              <h3>Verification & Compliance</h3>
               
-              <div className="verification-stats">
-                <div className="stat-card">
-                  <div className="stat-number">{userStats.total_creators || 0}</div>
-                  <div className="stat-label">Total Creators</div>
+              <div className="verification-tools">
+                <div className="verification-section">
+                  <h4>OTP Verification</h4>
+                  <div className="otp-form">
+                    <input
+                      type="email"
+                      placeholder="Email address for OTP"
+                      className="otp-input"
+                    />
+                    <button className="otp-btn">Send OTP</button>
+                  </div>
                 </div>
-                <div className="stat-card verified">
-                  <div className="stat-number">{analyticsData.engagement_metrics?.verified_creators || 0}</div>
-                  <div className="stat-label">Verified</div>
-                </div>
-                <div className="stat-card pending">
-                  <div className="stat-number">{userStats.pending_verification || 0}</div>
-                  <div className="stat-label">Pending Verification</div>
-                </div>
-              </div>
 
-              <div className="verification-criteria">
-                <h4>Verification Criteria</h4>
-                <div className="criteria-list">
-                  <div className="criteria-item">
-                    <span>✅ Minimum 10K followers on any platform</span>
-                  </div>
-                  <div className="criteria-item">
-                    <span>✅ Complete profile with bio and contact info</span>
-                  </div>
-                  <div className="criteria-item">
-                    <span>✅ Active content creation (last 30 days)</span>
-                  </div>
-                  <div className="criteria-item">
-                    <span>✅ No policy violations</span>
+                <div className="verification-section">
+                  <h4>Verification Criteria</h4>
+                  <div className="criteria-list">
+                    <div className="criteria-item">
+                      <span className="criteria-check">✅</span>
+                      <span>Social media account verification</span>
+                    </div>
+                    <div className="criteria-item">
+                      <span className="criteria-check">✅</span>
+                      <span>Profile completeness check</span>
+                    </div>
+                    <div className="criteria-item">
+                      <span className="criteria-check">✅</span>
+                      <span>Content quality assessment</span>
+                    </div>
+                    <div className="criteria-item">
+                      <span className="criteria-check">✅</span>
+                      <span>Community guidelines compliance</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="bulk-actions">
-                <h4>Bulk Actions</h4>
-                <div className="bulk-action-buttons">
-                  <button className="bulk-verify-btn">Verify All Eligible</button>
-                  <button className="bulk-notify-btn">Notify Pending Users</button>
-                  <button className="export-btn">Export Verification Report</button>
+                <div className="verification-section">
+                  <h4>Bulk Actions</h4>
+                  <div className="bulk-actions">
+                    <button className="bulk-btn">Verify All Pending</button>
+                    <button className="bulk-btn">Send Verification Reminders</button>
+                    <button className="bulk-btn">Export Verification Report</button>
+                  </div>
                 </div>
               </div>
             </div>
