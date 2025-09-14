@@ -28,6 +28,15 @@ MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 client = AsyncIOMotorClient(MONGO_URL)
 db = client.growkro
 
+# Razorpay client initialization
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET", "your_razorpay_secret") # For demo, will be configured properly
+
+if RAZORPAY_KEY_ID:
+    razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+else:
+    razorpay_client = None
+
 # Pydantic Models
 class Creator(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
