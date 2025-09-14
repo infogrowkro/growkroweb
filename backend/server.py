@@ -10,6 +10,10 @@ import json
 import razorpay
 import hmac
 import hashlib
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Initialize FastAPI app
 app = FastAPI(title="GrowKro API", version="1.0.0")
