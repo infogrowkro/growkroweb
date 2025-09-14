@@ -380,53 +380,204 @@ const AdminPanel = ({ onClose }) => {
             </div>
           )}
 
-          {activeTab === 'packages' && (
-            <div className="packages-management">
-              <h3>Highlight Packages</h3>
-              <div className="packages-overview">
-                <div className="package-card silver">
-                  <h4>Silver Package</h4>
-                  <div className="package-price">₹4,999</div>
-                  <div className="package-features">
-                    <div>30 days highlighting</div>
-                    <div>Priority in search</div>
-                    <div>Silver badge</div>
-                    <div>Basic analytics</div>
+          {/* Content Management */}
+          {activeTab === 'content' && (
+            <div className="content-management">
+              <h3>Content Moderation</h3>
+              
+              <div className="content-stats">
+                <div className="stat-card">
+                  <div className="stat-number">{contentReports.total_reports || 0}</div>
+                  <div className="stat-label">Total Reports</div>
+                </div>
+                <div className="stat-card pending">
+                  <div className="stat-number">{contentReports.pending_reports || 0}</div>
+                  <div className="stat-label">Pending Review</div>
+                </div>
+                <div className="stat-card resolved">
+                  <div className="stat-number">{contentReports.resolved_reports || 0}</div>
+                  <div className="stat-label">Resolved</div>
+                </div>
+              </div>
+
+              <h4>Recent Reports</h4>
+              <div className="reports-list">
+                {contentReports.recent_reports?.length > 0 ? (
+                  contentReports.recent_reports.map((report) => (
+                    <div key={report.id} className="report-item">
+                      <div className="report-info">
+                        <span className="report-type">{report.type}</span>
+                        <span className="report-reason">{report.reason}</span>
+                        <span className="report-date">{new Date(report.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <div className="report-actions">
+                        <button className="resolve-btn">Resolve</button>
+                        <button className="dismiss-btn">Dismiss</button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-reports">No reports found</div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Analytics */}
+          {activeTab === 'analytics' && (
+            <div className="analytics-dashboard">
+              <h3>Platform Analytics</h3>
+              
+              <div className="analytics-grid">
+                <div className="stat-card">
+                  <div className="stat-number">{analyticsData.user_growth?.total_creators || 0}</div>
+                  <div className="stat-label">Total Creators</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">{analyticsData.user_growth?.monthly_signups || 0}</div>
+                  <div className="stat-label">Monthly Signups</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">{analyticsData.engagement_metrics?.active_users || 0}</div>
+                  <div className="stat-label">Active Users</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">{analyticsData.engagement_metrics?.profile_views || 0}</div>
+                  <div className="stat-label">Profile Views</div>
+                </div>
+              </div>
+
+              <div className="growth-metrics">
+                <h4>Growth Metrics</h4>
+                <div className="metrics-list">
+                  <div className="metric-item">
+                    <span>User Retention Rate</span>
+                    <span>{analyticsData.engagement_metrics?.retention_rate || 0}%</span>
                   </div>
-                  <div className="package-stats">
-                    {stats.highlight_packages?.silver || 0} active subscriptions
+                  <div className="metric-item">
+                    <span>Average Session Duration</span>
+                    <span>{analyticsData.engagement_metrics?.avg_session_duration || 0} min</span>
+                  </div>
+                  <div className="metric-item">
+                    <span>Conversion Rate</span>
+                    <span>{analyticsData.revenue_metrics?.conversion_rate || 0}%</span>
                   </div>
                 </div>
-                
-                <div className="package-card gold">
-                  <h4>Gold Package</h4>
-                  <div className="package-price">₹9,999</div>
-                  <div className="package-features">
-                    <div>60 days highlighting</div>
-                    <div>Top priority in search</div>
-                    <div>Gold badge</div>
-                    <div>Advanced analytics</div>
-                    <div>Newsletter feature</div>
+              </div>
+            </div>
+          )}
+
+          {/* Notifications */}
+          {activeTab === 'notifications' && (
+            <div className="notifications-management">
+              <h3>Notification Center</h3>
+              
+              <div className="notification-form">
+                <h4>Send Notification</h4>
+                <div className="form-group">
+                  <label>Title</label>
+                  <input
+                    type="text"
+                    value={notificationForm.title}
+                    onChange={(e) => setNotificationForm({...notificationForm, title: e.target.value})}
+                    placeholder="Notification title"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Message</label>
+                  <textarea
+                    value={notificationForm.message}
+                    onChange={(e) => setNotificationForm({...notificationForm, message: e.target.value})}
+                    placeholder="Notification message"
+                    rows="4"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Target</label>
+                  <select
+                    value={notificationForm.target}
+                    onChange={(e) => setNotificationForm({...notificationForm, target: e.target.value})}
+                  >
+                    <option value="all">All Users</option>
+                    <option value="verified">Verified Creators</option>
+                    <option value="premium">Premium Members</option>
+                    <option value="pending">Pending Approval</option>
+                  </select>
+                </div>
+                <button className="send-notification-btn" onClick={sendNotification}>
+                  Send Notification
+                </button>
+              </div>
+
+              <h4>Notification History</h4>
+              <div className="notification-history">
+                {notificationHistory.length > 0 ? (
+                  notificationHistory.map((notification) => (
+                    <div key={notification.id} className="notification-item">
+                      <div className="notification-info">
+                        <h5>{notification.title}</h5>
+                        <p>{notification.message}</p>
+                        <span className="notification-meta">
+                          Sent to {notification.target} • {new Date(notification.sent_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="notification-stats">
+                        <span>Delivered: {notification.delivered_count}</span>
+                        <span>Opened: {notification.opened_count}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-notifications">No notifications sent yet</div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Verification Management */}
+          {activeTab === 'verification' && (
+            <div className="verification-management">
+              <h3>Verification Management</h3>
+              
+              <div className="verification-stats">
+                <div className="stat-card">
+                  <div className="stat-number">{userStats.total_creators || 0}</div>
+                  <div className="stat-label">Total Creators</div>
+                </div>
+                <div className="stat-card verified">
+                  <div className="stat-number">{analyticsData.engagement_metrics?.verified_creators || 0}</div>
+                  <div className="stat-label">Verified</div>
+                </div>
+                <div className="stat-card pending">
+                  <div className="stat-number">{userStats.pending_verification || 0}</div>
+                  <div className="stat-label">Pending Verification</div>
+                </div>
+              </div>
+
+              <div className="verification-criteria">
+                <h4>Verification Criteria</h4>
+                <div className="criteria-list">
+                  <div className="criteria-item">
+                    <span>✅ Minimum 10K followers on any platform</span>
                   </div>
-                  <div className="package-stats">
-                    {stats.highlight_packages?.gold || 0} active subscriptions
+                  <div className="criteria-item">
+                    <span>✅ Complete profile with bio and contact info</span>
+                  </div>
+                  <div className="criteria-item">
+                    <span>✅ Active content creation (last 30 days)</span>
+                  </div>
+                  <div className="criteria-item">
+                    <span>✅ No policy violations</span>
                   </div>
                 </div>
-                
-                <div className="package-card platinum">
-                  <h4>Platinum Package</h4>
-                  <div className="package-price">₹9,999</div>
-                  <div className="package-features">
-                    <div>90 days highlighting</div>
-                    <div>Maximum priority</div>
-                    <div>Platinum badge</div>
-                    <div>Premium analytics</div>
-                    <div>Newsletter feature</div>
-                    <div>Direct collaborations</div>
-                  </div>
-                  <div className="package-stats">
-                    {stats.highlight_packages?.platinum || 0} active subscriptions
-                  </div>
+              </div>
+
+              <div className="bulk-actions">
+                <h4>Bulk Actions</h4>
+                <div className="bulk-action-buttons">
+                  <button className="bulk-verify-btn">Verify All Eligible</button>
+                  <button className="bulk-notify-btn">Notify Pending Users</button>
+                  <button className="export-btn">Export Verification Report</button>
                 </div>
               </div>
             </div>
