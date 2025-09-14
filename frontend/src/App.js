@@ -575,7 +575,7 @@ function App() {
             </div>
             
             <div className="profile-section">
-              <h3>Social Media</h3>
+              <h3>Social Media Profiles</h3>
               <div className="social-links">
                 {selectedCreator.instagram_handle && (
                   <a 
@@ -606,6 +606,57 @@ function App() {
                       <div className="social-handle">@{selectedCreator.youtube_handle}</div>
                       <div className="social-followers">
                         {selectedCreator.youtube_subscribers.toLocaleString()} subscribers
+                      </div>
+                    </div>
+                  </a>
+                )}
+
+                {selectedCreator.twitter_handle && (
+                  <a 
+                    href={`https://twitter.com/${selectedCreator.twitter_handle}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link twitter"
+                  >
+                    <span className="social-icon">🐦</span>
+                    <div>
+                      <div className="social-handle">@{selectedCreator.twitter_handle}</div>
+                      <div className="social-followers">
+                        {selectedCreator.twitter_followers.toLocaleString()} followers
+                      </div>
+                    </div>
+                  </a>
+                )}
+
+                {selectedCreator.tiktok_handle && (
+                  <a 
+                    href={`https://tiktok.com/@${selectedCreator.tiktok_handle}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link tiktok"
+                  >
+                    <span className="social-icon">🎵</span>
+                    <div>
+                      <div className="social-handle">@{selectedCreator.tiktok_handle}</div>
+                      <div className="social-followers">
+                        {selectedCreator.tiktok_followers.toLocaleString()} followers
+                      </div>
+                    </div>
+                  </a>
+                )}
+
+                {selectedCreator.snapchat_handle && (
+                  <a 
+                    href={`https://snapchat.com/add/${selectedCreator.snapchat_handle}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-link snapchat"
+                  >
+                    <span className="social-icon">👻</span>
+                    <div>
+                      <div className="social-handle">@{selectedCreator.snapchat_handle}</div>
+                      <div className="social-followers">
+                        {selectedCreator.snapchat_followers.toLocaleString()} followers
                       </div>
                     </div>
                   </a>
