@@ -125,11 +125,21 @@ class GrowKroAPITester:
             if response.status_code == 200:
                 creator = response.json()
                 self.test_creators.append(creator["id"])
-                self.log_result("Create Second Creator", True, f"Created creator: {creator['name']}")
+                self.log_result("Create Second Enhanced Creator", True, f"Created creator: {creator['name']}")
+                
+                # Verify all 5 social platforms for second creator
+                if (creator["instagram_followers"] == 28000 and
+                    creator["youtube_subscribers"] == 85000 and
+                    creator["twitter_followers"] == 35000 and
+                    creator["tiktok_followers"] == 120000 and
+                    creator["snapchat_followers"] == 8000):
+                    self.log_result("Second Creator Multi-Platform Validation", True, "All 5 social platforms configured correctly")
+                else:
+                    self.log_result("Second Creator Multi-Platform Validation", False, "Social media field mismatch")
             else:
-                self.log_result("Create Second Creator", False, f"Status: {response.status_code}")
+                self.log_result("Create Second Enhanced Creator", False, f"Status: {response.status_code}")
         except Exception as e:
-            self.log_result("Create Second Creator", False, f"Exception: {str(e)}")
+            self.log_result("Create Second Enhanced Creator", False, f"Exception: {str(e)}")
         
         # Test 3: Try to create duplicate email
         try:
