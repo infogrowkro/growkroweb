@@ -160,6 +160,31 @@
   margin-bottom: 0.5rem;
 }
 
+.social-summary {
+  display: flex;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  flex-wrap: wrap;
+}
+
+.admin-social-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  background: #f8f9fa;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+}
+
+.creator-bio {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-top: 0.5rem;
+}
+
 .package-badge {
   display: inline-block;
   padding: 4px 12px;
