@@ -18,8 +18,52 @@ function App() {
     verified_only: false
   });
 
-  // Fetch creators on component mount
+  // Auth and Admin states
+  const [user, setUser] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [authType, setAuthType] = useState('login');
+
+  // Blog/CMS states
+  const [blogPosts, setBlogPosts] = useState([
+    {
+      id: 1,
+      title: "10 Tips to Grow Your Instagram Following Organically",
+      excerpt: "Learn the proven strategies that top creators use to build engaged audiences without buying followers.",
+      content: "Content creation is an art and a science. Here are the top strategies that successful creators use...",
+      author: "GrowKro Team",
+      date: "2024-01-15",
+      category: "Growth Tips",
+      image: "https://images.pexels.com/photos/5475810/pexels-photo-5475810.jpeg"
+    },
+    {
+      id: 2,
+      title: "Collaboration Success Stories: How Creators 10X Their Reach",
+      excerpt: "Real case studies of creators who multiplied their audience through strategic collaborations.",
+      content: "Collaborations are the secret weapon of successful content creators...",
+      author: "Priya Sharma",
+      date: "2024-01-10",
+      category: "Collaboration",
+      image: "https://images.pexels.com/photos/8728245/pexels-photo-8728245.jpeg"
+    },
+    {
+      id: 3,
+      title: "Monetization Strategies for Content Creators in 2024",
+      excerpt: "Discover the latest trends and platforms for creators to generate sustainable income.",
+      content: "The creator economy is booming. Here's how to make money from your content...",
+      author: "Rahul Tech",
+      date: "2024-01-05",
+      category: "Monetization",
+      image: "https://images.pexels.com/photos/5475816/pexels-photo-5475816.jpeg"
+    }
+  ]);
+
+  // Check for existing user on component mount
   useEffect(() => {
+    const savedUser = localStorage.getItem('growkro_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
     fetchCreators();
     fetchPackages();
   }, []);
