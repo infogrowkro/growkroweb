@@ -333,23 +333,67 @@ function App() {
       <section className="pricing-section">
         <div className="container">
           <h2 className="section-title">Highlight Packages</h2>
+          <p className="section-subtitle">Annual subscriptions with Instagram follower requirements</p>
+          
           <div className="pricing-grid">
-            {packages.map((pkg) => (
-              <div key={pkg.id} className={`pricing-card ${pkg.id}`}>
-                <div className="pricing-header">
-                  <h3>{pkg.name}</h3>
-                  <div className="price">
-                    ₹{pkg.price}<span>/package</span>
-                  </div>
+            <div className="pricing-card silver">
+              <div className="pricing-header">
+                <h3>Silver Highlight</h3>
+                <div className="price">
+                  ₹1,999<span>/year</span>
                 </div>
-                <ul className="features-list">
-                  {pkg.features.map((feature, index) => (
-                    <li key={index}>{feature}</li>
-                  ))}
-                </ul>
-                <button className="btn btn-outline">Choose Plan</button>
+                <div className="requirement">20K+ Instagram Followers Required</div>
               </div>
-            ))}
+              <ul className="features-list">
+                <li>Must have 20K+ followers on Instagram</li>
+                <li>Silver Badge on Profile</li>
+                <li>Priority Search Results</li>
+                <li>Basic Analytics</li>
+                <li>No Business Promotion or Paid Collaboration</li>
+              </ul>
+              <button className="btn btn-outline">Choose Silver</button>
+            </div>
+
+            <div className="pricing-card gold featured">
+              <div className="featured-badge">Most Popular</div>
+              <div className="pricing-header">
+                <h3>Gold Highlight</h3>
+                <div className="price">
+                  ₹4,999<span>/year</span>
+                </div>
+                <div className="requirement">100K+ Instagram Followers Required</div>
+              </div>
+              <ul className="features-list">
+                <li>Must have 100K+ followers on Instagram</li>
+                <li>Gold Badge on Profile</li>
+                <li>Priority Search Results</li>
+                <li>Advanced Analytics</li>
+                <li>Featured in weekly newsletter</li>
+                <li>Assured Paid Collaboration</li>
+              </ul>
+              <button className="btn btn-primary">Choose Gold</button>
+            </div>
+
+            <div className="pricing-card platinum">
+              <div className="pricing-header">
+                <h3>Platinum Highlight</h3>
+                <div className="price">
+                  ₹9,999<span>/year</span>
+                </div>
+                <div className="requirement">500K+ Instagram Followers Required</div>
+              </div>
+              <ul className="features-list">
+                <li>Must have 500K+ followers on Instagram</li>
+                <li>Platinum Badge on Profile</li>
+                <li>Priority Search Results</li>
+                <li>Premium Analytics Dashboard</li>
+                <li>Featured in weekly newsletter</li>
+                <li>Assured Paid Collaboration</li>
+                <li>Assured Brand Deals</li>
+                <li>Direct collaboration opportunities</li>
+              </ul>
+              <button className="btn btn-outline">Choose Platinum</button>
+            </div>
           </div>
         </div>
       </section>
