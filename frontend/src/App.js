@@ -568,8 +568,31 @@ function App() {
             </div>
             
             <div className="profile-actions">
-              <button className="btn btn-primary">Message Creator</button>
-              <button className="btn btn-secondary">Collaborate</button>
+              {user && user.isSubscribed ? (
+                <>
+                  <button className="btn btn-primary">Message Creator</button>
+                  <button className="btn btn-secondary">Collaborate</button>
+                </>
+              ) : (
+                <div className="subscription-required-actions">
+                  <p className="subscription-notice">🔒 Subscribe to message creators and access collaboration tools</p>
+                  {!user ? (
+                    <button 
+                      className="btn btn-primary"
+                      onClick={() => handleLogin('signup')}
+                    >
+                      Sign Up & Subscribe
+                    </button>
+                  ) : (
+                    <button 
+                      className="btn btn-primary"
+                      onClick={() => setShowSubscriptionModal(true)}
+                    >
+                      Subscribe Now - ₹49/year
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
