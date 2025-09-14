@@ -262,7 +262,74 @@ function App() {
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* Creator Showcase by Tiers */}
+      <section className="creator-tiers-section">
+        <div className="container">
+          <h2 className="section-title">Featured Creators</h2>
+          
+          <div className="tier-showcase">
+            <div className="tier-section silver-tier">
+              <div className="tier-header">
+                <h3>🥈 Silver Creators</h3>
+                <p>Growing creators with 20K+ Instagram followers</p>
+              </div>
+              <div className="tier-grid">
+                {/* Placeholder for Silver creators - will be populated dynamically */}
+                <div className="tier-creator-card">
+                  <div className="tier-avatar">P</div>
+                  <div className="tier-info">
+                    <h4>Priya Sharma</h4>
+                    <p>Fashion • Mumbai</p>
+                    <div className="tier-followers">
+                      <FontAwesomeIcon icon={faInstagram} /> 45K
+                    </div>
+                  </div>
+                  <div className="tier-badge silver">SILVER</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="tier-section gold-tier">
+              <div className="tier-header">
+                <h3>🥇 Gold Creators</h3>
+                <p>Established creators with 100K+ Instagram followers</p>
+              </div>
+              <div className="tier-grid">
+                {/* Placeholder for Gold creators */}
+                <div className="tier-creator-card">
+                  <div className="tier-avatar">R</div>
+                  <div className="tier-info">
+                    <h4>Rahul Tech</h4>
+                    <p>Technology • Bangalore</p>
+                    <div className="tier-followers">
+                      <FontAwesomeIcon icon={faInstagram} /> 280K
+                    </div>
+                  </div>
+                  <div className="tier-badge gold">GOLD</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="tier-section platinum-tier">
+              <div className="tier-header">
+                <h3>💎 Platinum Creators</h3>
+                <p>Top creators with 500K+ Instagram followers</p>
+              </div>
+              <div className="tier-grid">
+                {/* Placeholder for Platinum creators */}
+                <div className="tier-creator-card coming-soon">
+                  <div className="coming-soon-content">
+                    <h4>Premium Creators</h4>
+                    <p>Coming Soon</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Updated Pricing Section */}
       <section className="pricing-section">
         <div className="container">
           <h2 className="section-title">Highlight Packages</h2>
