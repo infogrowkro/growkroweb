@@ -415,8 +415,9 @@ metadata:
 test_plan:
   current_focus:
     - "Updated Razorpay Integration with Production Keys"
-    - "Business Owners API Routes"
-  stuck_tasks: []
+    - "Razorpay Merchant ID D9M2ydmYnhqKOD Authentication"
+  stuck_tasks:
+    - "Updated Razorpay Integration with Production Keys"
   test_all: false
   test_priority: "high_first"
 
