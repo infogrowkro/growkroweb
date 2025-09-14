@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the GrowKro Creator Profile System backend APIs. I've built a content creator collaboration platform with core APIs for Creator CRUD operations, search and filtering, highlight packages, and platform statistics."
+user_problem_statement: "Test the GrowKro Creator Profile System frontend thoroughly. I've built a content creator collaboration platform with the following features to test: Homepage Navigation, Creator Profile System, Highlight Packages Display, Responsive Design, and Social Media Integration."
 
 backend:
   - task: "Creator CRUD Operations"
