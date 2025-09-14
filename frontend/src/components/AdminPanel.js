@@ -336,39 +336,46 @@ const AdminPanel = ({ onClose }) => {
             </div>
           )}
 
-          {activeTab === 'stats' && (
-            <div className="stats-dashboard">
-              <h3>Platform Statistics</h3>
-              <div className="stats-grid">
+          {/* Financial Management */}
+          {activeTab === 'financial' && (
+            <div className="financial-management">
+              <h3>Financial Overview</h3>
+              
+              <div className="revenue-stats">
                 <div className="stat-card">
-                  <div className="stat-number">{stats.total_creators || 0}</div>
-                  <div className="stat-label">Total Creators</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-number">{stats.verified_creators || 0}</div>
-                  <div className="stat-label">Verified Creators</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-number">{stats.highlight_packages?.silver || 0}</div>
-                  <div className="stat-label">Silver Members</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-number">{stats.highlight_packages?.gold || 0}</div>
-                  <div className="stat-label">Gold Members</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-number">{stats.highlight_packages?.platinum || 0}</div>
-                  <div className="stat-label">Platinum Members</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-number">
-                    ₹{((stats.highlight_packages?.silver || 0) * 4999 + 
-                       (stats.highlight_packages?.gold || 0) * 9999 + 
-                       (stats.highlight_packages?.platinum || 0) * 9999 +
-                       (stats.verified_creators || 0) * 199).toLocaleString()}
-                  </div>
+                  <div className="stat-number">₹{revenueStats.total_revenue || 0}</div>
                   <div className="stat-label">Total Revenue</div>
                 </div>
+                <div className="stat-card">
+                  <div className="stat-number">₹{revenueStats.monthly_revenue || 0}</div>
+                  <div className="stat-label">This Month</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">{revenueStats.total_transactions || 0}</div>
+                  <div className="stat-label">Total Transactions</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">₹{revenueStats.average_transaction || 0}</div>
+                  <div className="stat-label">Avg Transaction</div>
+                </div>
+              </div>
+
+              <h4>Recent Transactions</h4>
+              <div className="transactions-list">
+                {transactions.length > 0 ? (
+                  transactions.map((transaction) => (
+                    <div key={transaction.id} className="transaction-item">
+                      <div className="transaction-info">
+                        <span className="transaction-type">{transaction.type}</span>
+                        <span className="transaction-user">{transaction.user_name}</span>
+                        <span className="transaction-date">{new Date(transaction.created_at).toLocaleDateString()}</span>
+                      </div>
+                      <div className="transaction-amount">₹{transaction.amount}</div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-transactions">No transactions found</div>
+                )}
               </div>
             </div>
           )}
