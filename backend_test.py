@@ -76,29 +76,46 @@ class GrowKroAPITester:
             if response.status_code == 200:
                 creator = response.json()
                 self.test_creators.append(creator["id"])
-                self.log_result("Create Valid Creator", True, f"Created creator: {creator['name']}")
+                self.log_result("Create Enhanced Creator", True, f"Created creator: {creator['name']}")
                 
-                # Verify all fields are set correctly
+                # Verify all social media fields are set correctly
                 if (creator["name"] == creator_data["name"] and 
                     creator["email"] == creator_data["email"] and
-                    creator["category"] == creator_data["category"]):
-                    self.log_result("Creator Data Validation", True, "All fields match")
+                    creator["category"] == creator_data["category"] and
+                    creator["instagram_followers"] == 45000 and
+                    creator["youtube_subscribers"] == 12000 and
+                    creator["twitter_followers"] == 25000 and
+                    creator["tiktok_followers"] == 80000 and
+                    creator["snapchat_followers"] == 15000):
+                    self.log_result("Multi-Platform Social Media Validation", True, "All 5 social platforms configured correctly")
                 else:
-                    self.log_result("Creator Data Validation", False, "Field mismatch")
+                    self.log_result("Multi-Platform Social Media Validation", False, "Social media field mismatch")
+                
+                # Verify profile status defaults to pending
+                if creator.get("profile_status") == "pending":
+                    self.log_result("Profile Status Default", True, "Profile status correctly set to pending")
+                else:
+                    self.log_result("Profile Status Default", False, f"Expected pending, got: {creator.get('profile_status')}")
             else:
-                self.log_result("Create Valid Creator", False, f"Status: {response.status_code}, Response: {response.text}")
+                self.log_result("Create Enhanced Creator", False, f"Status: {response.status_code}, Response: {response.text}")
         except Exception as e:
-            self.log_result("Create Valid Creator", False, f"Exception: {str(e)}")
+            self.log_result("Create Enhanced Creator", False, f"Exception: {str(e)}")
         
-        # Test 2: Create another creator for testing
+        # Test 2: Create another creator with all 5 social platforms
         creator_data2 = {
-            "name": "Vikram Tech",
-            "email": "vikram.tech@example.com", 
-            "bio": "Technology reviewer and gadget enthusiast",
-            "instagram_handle": "@vikram_tech",
-            "youtube_handle": "VikramTechReviews",
-            "instagram_followers": 45000,
-            "youtube_subscribers": 80000,
+            "name": "Rahul Tech",
+            "email": "rahul.tech@example.com", 
+            "bio": "Technology reviewer and gadget enthusiast with comprehensive social presence",
+            "instagram_handle": "@rahul_tech_reviews",
+            "instagram_followers": 28000,
+            "youtube_handle": "@RahulTechChannel",
+            "youtube_subscribers": 85000,
+            "twitter_handle": "@rahul_tech",
+            "twitter_followers": 35000,
+            "tiktok_handle": "@rahultech",
+            "tiktok_followers": 120000,
+            "snapchat_handle": "@rahul_tech_snap",
+            "snapchat_followers": 8000,
             "location": "Bangalore",
             "category": "Technology"
         }
