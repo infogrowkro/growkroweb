@@ -1,0 +1,305 @@
+/* Subscription Modal Styles */
+.subscription-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.subscription-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  width: 95%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subscription-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.subscription-modal-close:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.subscription-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.subscription-header h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subscription-header p {
+  color: #666;
+  font-size: 1.2rem;
+}
+
+.subscription-benefits {
+  margin-bottom: 2rem;
+}
+
+.subscription-benefits h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.benefit-icon {
+  font-size: 2rem;
+  min-width: 3rem;
+  text-align: center;
+}
+
+.benefit-item strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.benefit-item p {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.subscription-plan {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.plan-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+  max-width: 400px;
+  width: 100%;
+}
+
+.plan-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.plan-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.currency {
+  font-size: 1.5rem;
+}
+
+.amount {
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+.period {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.plan-savings {
+  color: #ffd93d;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.plan-features li {
+  padding: 0.5rem 0;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.subscribe-btn {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.subscribe-btn:hover {
+  background: #f8f9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.subscription-footer {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.secure-payment {
+  color: #4CAF50;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.terms {
+  color: #666;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.terms-link {
+  color: #667eea;
+  text-decoration: none;
+}
+
+.terms-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .subscription-modal {
+    margin: 1rem;
+    padding: 1.5rem;
+    max-height: 95vh;
+  }
+  
+  .subscription-header h2 {
+    font-size: 2rem;
+  }
+  
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .benefit-item {
+    padding: 0.75rem;
+  }
+  
+  .plan-card {
+    padding: 1.5rem;
+  }
+  
+  .amount {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .subscription-modal {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+  
+  .subscription-header h2 {
+    font-size: 1.8rem;
+  }
+  
+  .benefit-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .benefit-icon {
+    margin-bottom: 0.5rem;
+  }
+}
