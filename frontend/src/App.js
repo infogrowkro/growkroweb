@@ -160,7 +160,15 @@ function App() {
     }
   };
 
-  const checkSubscriptionAccess = () => {
+  const handleVerificationSuccess = async () => {
+    // Refresh creator data to show updated verification status
+    try {
+      fetchCreators();
+      alert('Verification payment successful! Your profile will be verified within 24 hours.');
+    } catch (error) {
+      console.error('Error refreshing creator data:', error);
+    }
+  };
     if (!user) {
       alert('Please sign up first to access creator features');
       handleLogin('signup');
