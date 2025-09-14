@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AdminPanel.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faInstagram, faYoutube, faTwitter, faTiktok, faSnapchat } from '@fortawesome/free-brands-svg-icons';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
