@@ -1209,6 +1209,17 @@ body {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.btn-success {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+}
+
 .subscription-badge {
   background: linear-gradient(135deg, #ffd93d 0%, #ff6b6b 100%);
   color: #333;
