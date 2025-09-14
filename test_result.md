@@ -257,9 +257,15 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Homepage Navigation and Hero Section"
+    - "Creator Profile System and Search"
+    - "Highlight Packages Display"
+    - "Individual Creator Profile Pages"
+    - "Responsive Design and Mobile View"
+    - "Social Media Integration Display"
   stuck_tasks: []
-  test_all: false
+  test_all: true
   test_priority: "high_first"
 
 agent_communication:
