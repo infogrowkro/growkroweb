@@ -165,17 +165,65 @@ backend:
           agent: "testing"
           comment: "Comprehensive validation implemented. Proper error responses for duplicate emails (400), non-existent resources (404), and invalid package upgrades. All edge cases handled correctly."
 
-  - task: "MongoDB Integration"
+  - task: "Payment Pricing API"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "testing"
-          comment: "Database operations working perfectly. Proper data storage and retrieval with UUID-based IDs. DateTime handling and data persistence verified through comprehensive testing."
+        - working: "NA"
+          agent: "main"
+          comment: "Payment pricing API implemented - GET /api/payments/pricing returns pricing for subscription (₹49), verification (₹199), and highlight packages (Silver ₹4999, Gold ₹9999, Platinum ₹9999) in both paise and INR format"
+
+  - task: "Create Payment Order API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Payment order creation API implemented - POST /api/payments/create-order creates Razorpay orders for different payment types with proper amount calculation and transaction record creation"
+
+  - task: "Payment Verification API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Payment verification API implemented - POST /api/payments/verify verifies Razorpay payment signatures and processes successful payments with user/creator updates"
+
+  - task: "Transaction Status API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Transaction status API implemented - GET /api/payments/transaction/{order_id} retrieves payment transaction status and details from payment_transactions collection"
+
+  - task: "Razorpay Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Razorpay client integration with merchant key D9M2ydmYnhqKOD, signature verification, and automatic user/creator updates after successful payments"
 
 frontend:
   - task: "Homepage Navigation and Hero Section"
