@@ -1,0 +1,464 @@
+/* Business Owners Section Styles */
+.business-owners-section {
+  padding: 2rem 0;
+  min-height: 80vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.business-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.business-header h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.business-header p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.coming-soon-badge {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.business-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 3rem;
+  background: white;
+  border-radius: 15px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3rem;
+}
+
+.business-tab {
+  background: none;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #666;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.business-tab:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.business-tab.active {
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.business-content {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.tab-description {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+/* Browse Businesses */
+.business-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.business-card {
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 2rem;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.business-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+  border-color: #667eea;
+}
+
+.business-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.business-header h4 {
+  font-size: 1.3rem;
+  color: #333;
+  margin: 0;
+}
+
+.industry-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+}
+
+.industry-tag.fashion { background: #e91e63; }
+.industry-tag.tech { background: #2196f3; }
+.industry-tag.food { background: #ff9800; }
+.industry-tag.lifestyle { background: #9c27b0; }
+.industry-tag.fitness { background: #4caf50; }
+.industry-tag.beauty { background: #f06292; }
+.industry-tag.travel { background: #00bcd4; }
+.industry-tag.gaming { background: #673ab7; }
+
+.business-details {
+  margin-bottom: 1.5rem;
+}
+
+.business-details p {
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.business-requirements {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.business-requirements h5 {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.business-requirements p {
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.platform-icons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.platform-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.platform-icon.instagram { background: #E4405F; }
+.platform-icon.youtube { background: #FF0000; }
+.platform-icon.twitter { background: #1DA1F2; }
+.platform-icon.tiktok { background: #000000; }
+.platform-icon.snapchat { background: #FFFC00; color: #000; }
+
+.business-actions {
+  text-align: center;
+}
+
+/* Registration Form */
+.registration-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-section {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+}
+
+.form-section h4 {
+  color: #333;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  border-bottom: 2px solid #667eea;
+  padding-bottom: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-input, .form-select, .form-textarea {
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.platform-selection {
+  margin-top: 1rem;
+}
+
+.platform-selection label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.platform-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.platform-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.platform-checkbox:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.platform-checkbox input[type="checkbox"] {
+  margin: 0;
+}
+
+.platform-label {
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.registration-submit {
+  width: 100%;
+  padding: 1rem 2rem;
+  font-size: 1.1rem !important;
+  margin-top: 1rem;
+}
+
+/* Creator Matches */
+.matches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.match-creator-card {
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.match-creator-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-color: #667eea;
+}
+
+.creator-info h4 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.creator-info p {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.creator-social-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.social-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #666;
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+}
+
+.creator-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.creator-badge.silver {
+  background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+  color: white;
+}
+
+.creator-badge.gold {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: white;
+}
+
+.creator-badge.platinum {
+  background: linear-gradient(135deg, #E5E4E2, #C0C0C0);
+  color: #333;
+}
+
+/* Empty States */
+.no-businesses, .no-matches {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.empty-state h4 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.empty-state p {
+  color: #666;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .business-owners-section {
+    padding: 1rem 0;
+  }
+  
+  .business-header h1 {
+    font-size: 2rem;
+  }
+  
+  .business-tabs {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .business-tab {
+    padding: 0.75rem 1rem;
+  }
+  
+  .business-content {
+    padding: 1.5rem;
+  }
+  
+  .business-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .platform-checkboxes {
+    grid-template-columns: 1fr;
+  }
+  
+  .matches-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .creator-social-stats {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .business-card, .match-creator-card {
+    padding: 1rem;
+  }
+  
+  .form-section {
+    padding: 1.5rem;
+  }
+  
+  .platform-icons {
+    justify-content: center;
+  }
+}
