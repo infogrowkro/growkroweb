@@ -1459,8 +1459,223 @@ body {
   font-weight: 600;
 }
 
+/* Creator Tiers Showcase */
+.creator-tiers-section {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.tier-showcase {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.tier-section {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.tier-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+}
+
+.tier-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tier-header h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.silver-tier .tier-header h3 {
+  color: #C0C0C0;
+}
+
+.gold-tier .tier-header h3 {
+  color: #FFD700;
+}
+
+.platinum-tier .tier-header h3 {
+  color: #E5E4E2;
+}
+
+.tier-header p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.tier-grid {
+  display: flex;
+  justify-content: center;
+}
+
+.tier-creator-card {
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 1.5rem;
+  text-align: center;
+  width: 200px;
+  transition: all 0.3s ease;
+}
+
+.tier-creator-card:hover {
+  transform: scale(1.05);
+  background: #fff;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.tier-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 auto 1rem;
+}
+
+.tier-info h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.tier-info p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.tier-followers {
+  font-size: 0.9rem;
+  color: #E4405F;
+  font-weight: 600;
+}
+
+.tier-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 15px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+.tier-badge.silver {
+  background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+  color: white;
+}
+
+.tier-badge.gold {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: white;
+}
+
+.tier-badge.platinum {
+  background: linear-gradient(135deg, #E5E4E2, #C0C0C0);
+  color: #333;
+}
+
+.coming-soon {
+  opacity: 0.6;
+}
+
+.coming-soon-content h4 {
+  color: #999;
+}
+
+.coming-soon-content p {
+  color: #bbb;
+  font-style: italic;
+}
+
+/* Updated Pricing Section */
+.section-subtitle {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: -1rem;
+  margin-bottom: 3rem;
+}
+
+.pricing-card.featured {
+  position: relative;
+  transform: scale(1.05);
+  border: 3px solid #FFD700;
+}
+
+.featured-badge {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+}
+
+.requirement {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.pricing-card.silver .requirement {
+  background: rgba(192, 192, 192, 0.1);
+  color: #999;
+  border-color: rgba(192, 192, 192, 0.3);
+}
+
+.pricing-card.gold .requirement {
+  background: rgba(255, 215, 0, 0.1);
+  color: #b8860b;
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+.pricing-card.platinum .requirement {
+  background: rgba(229, 228, 226, 0.2);
+  color: #666;
+  border-color: rgba(229, 228, 226, 0.4);
+}
+
 /* Responsive Design Updates */
 @media (max-width: 768px) {
+  .tier-showcase {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .pricing-card.featured {
+    transform: none;
+    margin-bottom: 2rem;
+  }
+  
+  .featured-badge {
+    top: -10px;
+  }
+}
   .user-menu {
     flex-direction: column;
     gap: 0.5rem;
