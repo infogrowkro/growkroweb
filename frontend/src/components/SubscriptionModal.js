@@ -168,9 +168,10 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribe, user }) => {
             </ul>
             <button 
               className="subscribe-btn"
-              onClick={() => onSubscribe('annual')}
+              onClick={() => handleRazorpayPayment('annual')}
+              disabled={isProcessing}
             >
-              Subscribe Now - ₹49/year
+              {isProcessing ? 'Processing...' : 'Subscribe Now - ₹49/year'}
             </button>
           </div>
         </div>
