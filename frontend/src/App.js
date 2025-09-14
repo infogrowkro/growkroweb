@@ -471,7 +471,11 @@ function App() {
     <nav className="navbar">
       <div className="nav-container">
         <div className="nav-logo" onClick={() => setCurrentPage('home')}>
-          <span className="logo-text">GrowKro</span>
+          <img 
+            src="https://customer-assets.emergentagent.com/job_creator-hub-147/artifacts/chmrtsob_Grow_Kro_2.png" 
+            alt="GrowKro" 
+            className="logo-image"
+          />
         </div>
         
         <div className="nav-links">
