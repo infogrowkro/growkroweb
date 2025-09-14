@@ -544,6 +544,38 @@ body {
   padding: 0.5rem;
   border-radius: 10px;
   min-width: 120px;
+  transition: all 0.3s ease;
+}
+
+.social-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.social-stat .social-icon {
+  font-size: 1.2rem;
+  min-width: 20px;
+}
+
+/* Social Media Brand Colors */
+.social-stat.instagram .social-icon {
+  color: #E4405F;
+}
+
+.social-stat.youtube .social-icon {
+  color: #FF0000;
+}
+
+.social-stat.twitter .social-icon {
+  color: #1DA1F2;
+}
+
+.social-stat.tiktok .social-icon {
+  color: #000000;
+}
+
+.social-stat.snapchat .social-icon {
+  color: #FFFC00;
 }
 
 .social-details {
