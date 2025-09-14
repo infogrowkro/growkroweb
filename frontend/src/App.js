@@ -457,8 +457,8 @@ function App() {
         
         <div className="social-stats">
           {creator.instagram_handle && (
-            <div className="social-stat">
-              <span className="social-icon">📸</span>
+            <div className="social-stat instagram">
+              <FontAwesomeIcon icon={faInstagram} className="social-icon" />
               <div className="social-details">
                 <span className="social-handle">@{creator.instagram_handle}</span>
                 <span className="social-count">{creator.instagram_followers.toLocaleString()}</span>
@@ -466,8 +466,8 @@ function App() {
             </div>
           )}
           {creator.youtube_handle && (
-            <div className="social-stat">
-              <span className="social-icon">🎥</span>
+            <div className="social-stat youtube">
+              <FontAwesomeIcon icon={faYoutube} className="social-icon" />
               <div className="social-details">
                 <span className="social-handle">@{creator.youtube_handle}</span>
                 <span className="social-count">{creator.youtube_subscribers.toLocaleString()}</span>
@@ -475,8 +475,8 @@ function App() {
             </div>
           )}
           {creator.twitter_handle && (
-            <div className="social-stat">
-              <span className="social-icon">🐦</span>
+            <div className="social-stat twitter">
+              <FontAwesomeIcon icon={faTwitter} className="social-icon" />
               <div className="social-details">
                 <span className="social-handle">@{creator.twitter_handle}</span>
                 <span className="social-count">{creator.twitter_followers.toLocaleString()}</span>
@@ -484,8 +484,8 @@ function App() {
             </div>
           )}
           {creator.tiktok_handle && (
-            <div className="social-stat">
-              <span className="social-icon">🎵</span>
+            <div className="social-stat tiktok">
+              <FontAwesomeIcon icon={faTiktok} className="social-icon" />
               <div className="social-details">
                 <span className="social-handle">@{creator.tiktok_handle}</span>
                 <span className="social-count">{creator.tiktok_followers.toLocaleString()}</span>
@@ -493,8 +493,8 @@ function App() {
             </div>
           )}
           {creator.snapchat_handle && (
-            <div className="social-stat">
-              <span className="social-icon">👻</span>
+            <div className="social-stat snapchat">
+              <FontAwesomeIcon icon={faSnapchat} className="social-icon" />
               <div className="social-details">
                 <span className="social-handle">@{creator.snapchat_handle}</span>
                 <span className="social-count">{creator.snapchat_followers.toLocaleString()}</span>
