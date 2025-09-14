@@ -75,6 +75,30 @@ class HighlightPackage(BaseModel):
     color: str
     description: str
 
+class PaymentTransaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: Optional[str] = None
+    user_email: Optional[str] = None
+    session_id: str
+    payment_type: str  # subscription, verification, highlight_package
+    amount: float
+    currency: str = "inr"
+    status: str = "pending"  # pending, completed, failed, cancelled
+    payment_status: str = "unpaid"  # unpaid, paid, failed
+    metadata: Optional[Dict] = {}
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SubscriptionRequest(BaseModel):
+    plan_type: str = "annual"
+    success_url: str
+    cancel_url: str
+
+class VerificationRequest(BaseModel):
+    creator_id: str
+    success_url: str
+    cancel_url: str
+
 # Helper functions
 def prepare_for_mongo(data):
     """Convert datetime objects to ISO strings for MongoDB storage"""
