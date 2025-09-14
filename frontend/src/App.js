@@ -845,6 +845,13 @@ function App() {
         onSubscribe={handleSubscription}
         user={user}
       />
+
+      <VerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        creator={selectedCreatorForVerification}
+        onVerificationSuccess={handleVerificationSuccess}
+      />
       
       {showAdminPanel && (
         <AdminPanel onClose={() => setShowAdminPanel(false)} />
