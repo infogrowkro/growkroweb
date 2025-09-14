@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the GrowKro Creator Profile System frontend thoroughly. I've built a content creator collaboration platform with the following features to test: Homepage Navigation, Creator Profile System, Highlight Packages Display, Responsive Design, and Social Media Integration."
+user_problem_statement: "Test the GrowKro Razorpay payment integration backend APIs. I've integrated Razorpay payment system with the following features to test: Payment Pricing API, Create Payment Order, Payment Verification, Transaction Status, Payment Types (Subscription, Verification, Highlight Packages), and Razorpay Integration with signature verification."
 
 backend:
   - task: "Creator CRUD Operations"
