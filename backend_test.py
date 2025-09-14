@@ -52,15 +52,21 @@ class GrowKroAPITester:
         """Test creator creation with validation"""
         print("\n=== Testing Creator Creation ===")
         
-        # Test 1: Create valid creator
+        # Test 1: Create valid creator with all 5 social platforms (Enhanced)
         creator_data = {
-            "name": "Ananya Sharma",
-            "email": "ananya.sharma@example.com",
-            "bio": "Fashion and lifestyle content creator from Mumbai",
-            "instagram_handle": "@ananya_fashion",
-            "youtube_handle": "AnanyaStyleTV",
-            "instagram_followers": 25000,
-            "youtube_subscribers": 15000,
+            "name": "Priya Sharma",
+            "email": "priya.sharma@example.com",
+            "bio": "Fashion and lifestyle content creator from Mumbai with multi-platform presence",
+            "instagram_handle": "@priya_fashion_vibes",
+            "instagram_followers": 45000,
+            "youtube_handle": "@PriyaStyleDiary",
+            "youtube_subscribers": 12000,
+            "twitter_handle": "@priya_fashion",
+            "twitter_followers": 25000,
+            "tiktok_handle": "@priyafashion",
+            "tiktok_followers": 80000,
+            "snapchat_handle": "@priya_snaps",
+            "snapchat_followers": 15000,
             "location": "Mumbai",
             "category": "Fashion"
         }
