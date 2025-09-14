@@ -135,7 +135,24 @@ def parse_from_mongo(item):
         item['updated_at'] = datetime.fromisoformat(item['updated_at'])
     return item
 
-# Predefined highlight packages
+# Payment pricing configuration (amounts in paise)
+PAYMENT_PRICING = {
+    "subscription": {
+        "annual": 4900,  # ₹49
+        "name": "Annual Subscription",
+        "description": "Access all creator features for 1 year"
+    },
+    "verification": {
+        "profile": 19900,  # ₹199
+        "name": "Profile Verification",
+        "description": "Get verified creator badge"
+    },
+    "highlight_package": {
+        "silver": 499900,  # ₹4999
+        "gold": 999900,    # ₹9999
+        "platinum": 999900 # ₹9999
+    }
+}
 HIGHLIGHT_PACKAGES = [
     {
         "id": "silver",
