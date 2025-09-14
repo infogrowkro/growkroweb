@@ -52,6 +52,232 @@ class GrowKroAPITester:
         except Exception as e:
             self.log_result("API Health Check", False, f"Connection error: {str(e)}")
             return False
+
+    def test_urgent_razorpay_integration(self):
+        """URGENT: Test updated Razorpay integration with new Merchant ID D9M2ydmYnhqKOD"""
+        print("\n🔥 URGENT: Testing Updated Razorpay Integration")
+        print(f"🔑 Expected Merchant ID: {EXPECTED_MERCHANT_ID}")
+        print("=" * 60)
+        
+        # Test 1: Verify Razorpay Configuration - GET /api/payments/pricing
+        try:
+            response = requests.get(f"{self.base_url}/payments/pricing")
+            if response.status_code == 200:
+                pricing = response.json()
+                self.log_result("Razorpay Pricing API", True, "Pricing API accessible with Razorpay integration")
+                
+                # Verify subscription pricing (₹49)
+                if "subscription" in pricing and "annual" in pricing["subscription"]:
+                    annual = pricing["subscription"]["annual"]
+                    if annual["amount"] == 4900 and annual["amount_inr"] == 49:
+                        self.log_result("Subscription Pricing ₹49", True, f"Correct: ₹{annual['amount_inr']} ({annual['amount']} paise)")
+                    else:
+                        self.log_result("Subscription Pricing ₹49", False, f"Wrong: ₹{annual['amount_inr']} ({annual['amount']} paise)")
+                
+                # Verify verification pricing (₹199)
+                if "verification" in pricing and "profile" in pricing["verification"]:
+                    profile = pricing["verification"]["profile"]
+                    if profile["amount"] == 19900 and profile["amount_inr"] == 199:
+                        self.log_result("Verification Pricing ₹199", True, f"Correct: ₹{profile['amount_inr']} ({profile['amount']} paise)")
+                    else:
+                        self.log_result("Verification Pricing ₹199", False, f"Wrong: ₹{profile['amount_inr']} ({profile['amount']} paise)")
+                
+            else:
+                self.log_result("Razorpay Pricing API", False, f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_result("Razorpay Pricing API", False, f"Exception: {str(e)}")
+        
+        # Test 2: Create Payment Order with New Merchant ID - POST /api/payments/create-order
+        print("\n--- Testing Payment Order Creation ---")
+        
+        # Create subscription order (₹49)
+        try:
+            order_data = {"payment_type": "subscription"}
+            response = requests.post(f"{self.base_url}/payments/create-order", json=order_data)
+            if response.status_code == 200:
+                order = response.json()
+                required_fields = ["order_id", "amount", "currency", "key_id"]
+                if all(field in order for field in required_fields):
+                    # CRITICAL: Verify merchant ID matches expected
+                    if order["key_id"] == EXPECTED_MERCHANT_ID:
+                        self.log_result("Subscription Order - Merchant ID", True, f"✅ Correct Merchant ID: {order['key_id']}")
+                    else:
+                        self.log_result("Subscription Order - Merchant ID", False, f"❌ Wrong Merchant ID: {order['key_id']}, Expected: {EXPECTED_MERCHANT_ID}")
+                    
+                    # Verify amount and currency
+                    if order["amount"] == 4900 and order["currency"] == "INR":
+                        self.log_result("Subscription Order - Amount", True, f"✅ Correct: ₹{order['amount']/100} ({order['amount']} paise)")
+                        self.subscription_order_id = order["order_id"]
+                    else:
+                        self.log_result("Subscription Order - Amount", False, f"❌ Wrong: {order['amount']} paise, {order['currency']}")
+                else:
+                    self.log_result("Subscription Order Creation", False, f"Missing fields: {list(order.keys())}")
+            else:
+                self.log_result("Subscription Order Creation", False, f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_result("Subscription Order Creation", False, f"Exception: {str(e)}")
+        
+        # Create verification order (₹199)
+        try:
+            order_data = {"payment_type": "verification", "creator_id": "test_creator_id"}
+            response = requests.post(f"{self.base_url}/payments/create-order", json=order_data)
+            if response.status_code == 200:
+                order = response.json()
+                if order["key_id"] == EXPECTED_MERCHANT_ID and order["amount"] == 19900:
+                    self.log_result("Verification Order - ₹199", True, f"✅ Merchant: {order['key_id']}, Amount: ₹{order['amount']/100}")
+                    self.verification_order_id = order["order_id"]
+                else:
+                    self.log_result("Verification Order - ₹199", False, f"❌ Merchant: {order['key_id']}, Amount: {order['amount']}")
+            else:
+                self.log_result("Verification Order - ₹199", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("Verification Order - ₹199", False, f"Exception: {str(e)}")
+        
+        # Test 3: Razorpay Client Authentication Verification
+        print("\n--- Testing Razorpay Client Authentication ---")
+        
+        # Test if Razorpay client is properly initialized by attempting order creation
+        try:
+            # Try creating multiple order types to verify client works
+            test_orders = [
+                {"payment_type": "subscription", "expected_amount": 4900},
+                {"payment_type": "verification", "expected_amount": 19900, "creator_id": "test_id"}
+            ]
+            
+            successful_orders = 0
+            for i, order_data in enumerate(test_orders):
+                response = requests.post(f"{self.base_url}/payments/create-order", json=order_data)
+                if response.status_code == 200:
+                    order = response.json()
+                    if (order.get("key_id") == EXPECTED_MERCHANT_ID and 
+                        order.get("amount") == order_data["expected_amount"]):
+                        successful_orders += 1
+            
+            if successful_orders == len(test_orders):
+                self.log_result("Razorpay Client Authentication", True, f"✅ All {successful_orders} order types created successfully")
+            else:
+                self.log_result("Razorpay Client Authentication", False, f"❌ Only {successful_orders}/{len(test_orders)} order types successful")
+                
+        except Exception as e:
+            self.log_result("Razorpay Client Authentication", False, f"Exception: {str(e)}")
+        
+        # Test 4: Test Different Payment Types
+        print("\n--- Testing Different Payment Types ---")
+        
+        # Test highlight package orders
+        package_tests = [
+            {"package_id": "silver", "expected_amount": 199900},
+            {"package_id": "gold", "expected_amount": 499900},
+            {"package_id": "platinum", "expected_amount": 999900}
+        ]
+        
+        for package_test in package_tests:
+            try:
+                order_data = {
+                    "payment_type": "highlight_package",
+                    "package_id": package_test["package_id"],
+                    "creator_id": "test_creator_id"
+                }
+                response = requests.post(f"{self.base_url}/payments/create-order", json=order_data)
+                if response.status_code == 200:
+                    order = response.json()
+                    if (order.get("key_id") == EXPECTED_MERCHANT_ID and 
+                        order.get("amount") == package_test["expected_amount"]):
+                        self.log_result(f"{package_test['package_id'].title()} Package Order", True, 
+                                      f"✅ Merchant: {order['key_id']}, Amount: ₹{order['amount']/100}")
+                    else:
+                        self.log_result(f"{package_test['package_id'].title()} Package Order", False, 
+                                      f"❌ Wrong details: {order.get('key_id')}, {order.get('amount')}")
+                else:
+                    self.log_result(f"{package_test['package_id'].title()} Package Order", False, 
+                                  f"Status: {response.status_code}")
+            except Exception as e:
+                self.log_result(f"{package_test['package_id'].title()} Package Order", False, f"Exception: {str(e)}")
+        
+        # Test 5: Verify Transaction Status API
+        print("\n--- Testing Transaction Status API ---")
+        
+        if hasattr(self, 'subscription_order_id'):
+            try:
+                response = requests.get(f"{self.base_url}/payments/transaction/{self.subscription_order_id}")
+                if response.status_code == 200:
+                    transaction = response.json()
+                    if (transaction.get("order_id") == self.subscription_order_id and
+                        transaction.get("payment_type") == "subscription" and
+                        transaction.get("amount") == 4900):
+                        self.log_result("Transaction Status API", True, f"✅ Transaction stored correctly: {transaction.get('status')}")
+                    else:
+                        self.log_result("Transaction Status API", False, "❌ Transaction details mismatch")
+                else:
+                    self.log_result("Transaction Status API", False, f"Status: {response.status_code}")
+            except Exception as e:
+                self.log_result("Transaction Status API", False, f"Exception: {str(e)}")
+        
+        # Test 6: Error Handling and Validation
+        print("\n--- Testing Error Handling ---")
+        
+        # Test invalid payment type
+        try:
+            order_data = {"payment_type": "invalid_type"}
+            response = requests.post(f"{self.base_url}/payments/create-order", json=order_data)
+            if response.status_code == 400:
+                self.log_result("Invalid Payment Type Handling", True, "✅ Correctly rejected invalid payment type")
+            else:
+                self.log_result("Invalid Payment Type Handling", False, f"Expected 400, got: {response.status_code}")
+        except Exception as e:
+            self.log_result("Invalid Payment Type Handling", False, f"Exception: {str(e)}")
+        
+        # Test invalid package ID
+        try:
+            order_data = {"payment_type": "highlight_package", "package_id": "invalid_package"}
+            response = requests.post(f"{self.base_url}/payments/create-order", json=order_data)
+            if response.status_code == 400:
+                self.log_result("Invalid Package ID Handling", True, "✅ Correctly rejected invalid package ID")
+            else:
+                self.log_result("Invalid Package ID Handling", False, f"Expected 400, got: {response.status_code}")
+        except Exception as e:
+            self.log_result("Invalid Package ID Handling", False, f"Exception: {str(e)}")
+
+    def run_urgent_razorpay_tests(self):
+        """Run urgent Razorpay integration tests only"""
+        print("🚨 URGENT: Razorpay Integration Testing with New Merchant ID")
+        print(f"🔗 Testing Payment APIs at: {self.base_url}")
+        print(f"🔑 Expected Merchant ID: {EXPECTED_MERCHANT_ID}")
+        print("=" * 70)
+        
+        # Check API health first
+        if not self.test_api_health():
+            print("❌ API is not accessible. Stopping tests.")
+            return self.test_results
+        
+        # Run urgent Razorpay tests
+        self.test_urgent_razorpay_integration()
+        
+        # Print summary
+        print("\n" + "=" * 70)
+        print("📊 URGENT RAZORPAY TEST SUMMARY")
+        print("=" * 70)
+        print(f"✅ Passed: {self.test_results['passed']}")
+        print(f"❌ Failed: {self.test_results['failed']}")
+        
+        if self.test_results['errors']:
+            print("\n🔍 FAILED TESTS:")
+            for error in self.test_results['errors']:
+                print(f"   • {error}")
+        
+        success_rate = (self.test_results['passed'] / (self.test_results['passed'] + self.test_results['failed'])) * 100 if (self.test_results['passed'] + self.test_results['failed']) > 0 else 0
+        print(f"\n📈 Success Rate: {success_rate:.1f}%")
+        
+        if success_rate >= 90:
+            print("🎉 RAZORPAY INTEGRATION: EXCELLENT")
+        elif success_rate >= 75:
+            print("✅ RAZORPAY INTEGRATION: GOOD")
+        elif success_rate >= 50:
+            print("⚠️ RAZORPAY INTEGRATION: NEEDS ATTENTION")
+        else:
+            print("❌ RAZORPAY INTEGRATION: CRITICAL ISSUES")
+        
+        return self.test_results
     
     def test_create_creator(self):
         """Test creator creation with validation"""
