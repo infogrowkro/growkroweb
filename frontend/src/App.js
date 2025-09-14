@@ -3,6 +3,7 @@ import './App.css';
 import AuthModal from './components/AuthModal';
 import AdminPanel from './components/AdminPanel';
 import SubscriptionModal from './components/SubscriptionModal';
+import VerificationModal from './components/VerificationModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
