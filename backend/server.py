@@ -1122,6 +1122,271 @@ async def verify_otp(email: str, otp: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error verifying OTP: {str(e)}")
 
+# Business Owners Section (Brand Collaboration)
+@app.post("/api/business-owners", response_model=BusinessOwner)
+async def create_business_owner(business_data: BusinessOwnerCreate):
+    """Register new business owner for brand collaborations"""
+    try:
+        # Check if email already exists
+        existing_business = await db.business_owners.find_one({"email": business_data.email})
+        if existing_business:
+            raise HTTPException(status_code=400, detail="Business owner with this email already exists")
+        
+        # Create new business owner
+        business_owner = BusinessOwner(**business_data.dict())
+        business_dict = business_owner.dict()
+        business_dict = prepare_for_mongo(business_dict)
+        
+        # Insert into database
+        await db.business_owners.insert_one(business_dict)
+        
+        return business_owner
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creating business owner: {str(e)}")
+
+@app.get("/api/business-owners", response_model=List[BusinessOwner])
+async def get_business_owners(
+    industry: Optional[str] = None,
+    location: Optional[str] = None,
+    verified_only: Optional[bool] = False,
+    limit: Optional[int] = 20,
+    skip: Optional[int] = 0
+):
+    """Get list of business owners with optional filtering"""
+    try:
+        filter_query = {}
+        if industry:
+            filter_query["industry"] = {"$regex": industry, "$options": "i"}
+        if location:
+            filter_query["location"] = {"$regex": location, "$options": "i"}
+        if verified_only:
+            filter_query["verified_business"] = True
+        
+        # Only show approved business owners
+        filter_query["profile_status"] = "approved"
+        
+        cursor = db.business_owners.find(filter_query).skip(skip).limit(limit)
+        business_owners = await cursor.to_list(length=limit)
+        
+        parsed_business_owners = []
+        for business in business_owners:
+            parsed_business = parse_from_mongo(business)
+            if parsed_business:
+                parsed_business_owners.append(BusinessOwner(**parsed_business))
+        
+        return parsed_business_owners
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching business owners: {str(e)}")
+
+@app.get("/api/business-owners/{business_id}", response_model=BusinessOwner)
+async def get_business_owner(business_id: str):
+    """Get specific business owner by ID"""
+    try:
+        business = await db.business_owners.find_one({"id": business_id})
+        if not business:
+            raise HTTPException(status_code=404, detail="Business owner not found")
+        
+        parsed_business = parse_from_mongo(business)
+        return BusinessOwner(**parsed_business)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching business owner: {str(e)}")
+
+# Collaboration Requests
+@app.post("/api/collaboration-requests", response_model=CollaborationRequest)
+async def create_collaboration_request(request_data: CollaborationRequestCreate, business_owner_id: str):
+    """Create collaboration request from business owner to creator"""
+    try:
+        # Verify business owner exists
+        business_owner = await db.business_owners.find_one({"id": business_owner_id})
+        if not business_owner:
+            raise HTTPException(status_code=404, detail="Business owner not found")
+        
+        # Verify creator exists
+        creator = await db.creators.find_one({"id": request_data.creator_id})
+        if not creator:
+            raise HTTPException(status_code=404, detail="Creator not found")
+        
+        # Create collaboration request
+        collaboration_request = CollaborationRequest(
+            business_owner_id=business_owner_id,
+            **request_data.dict()
+        )
+        
+        request_dict = collaboration_request.dict()
+        request_dict = prepare_for_mongo(request_dict)
+        
+        # Insert into database
+        await db.collaboration_requests.insert_one(request_dict)
+        
+        return collaboration_request
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error creating collaboration request: {str(e)}")
+
+@app.get("/api/collaboration-requests/creator/{creator_id}")
+async def get_creator_collaboration_requests(creator_id: str):
+    """Get collaboration requests for a specific creator"""
+    try:
+        cursor = db.collaboration_requests.find({"creator_id": creator_id}).sort("created_at", -1)
+        requests = await cursor.to_list(length=None)
+        
+        parsed_requests = []
+        for request in requests:
+            parsed_request = parse_from_mongo(request)
+            if parsed_request:
+                # Get business owner info for each request
+                business_owner = await db.business_owners.find_one({"id": parsed_request["business_owner_id"]})
+                if business_owner:
+                    parsed_request["business_owner"] = parse_from_mongo(business_owner)
+                
+                parsed_requests.append(parsed_request)
+        
+        return parsed_requests
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching collaboration requests: {str(e)}")
+
+@app.put("/api/collaboration-requests/{request_id}/respond")
+async def respond_to_collaboration_request(request_id: str, status: str, response: str):
+    """Creator responds to collaboration request"""
+    try:
+        if status not in ["accepted", "rejected"]:
+            raise HTTPException(status_code=400, detail="Invalid status. Must be 'accepted' or 'rejected'")
+        
+        result = await db.collaboration_requests.update_one(
+            {"id": request_id},
+            {"$set": {
+                "status": status,
+                "creator_response": response,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Collaboration request not found")
+        
+        return {"message": f"Collaboration request {status} successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error responding to collaboration request: {str(e)}")
+
+@app.get("/api/creators/match-business/{business_owner_id}")
+async def match_creators_for_business(business_owner_id: str, limit: Optional[int] = 10):
+    """Find creators that match business owner requirements"""
+    try:
+        # Get business owner requirements
+        business_owner = await db.business_owners.find_one({"id": business_owner_id})
+        if not business_owner:
+            raise HTTPException(status_code=404, detail="Business owner not found")
+        
+        # Build creator filter based on business requirements
+        filter_query = {"profile_status": "approved"}
+        
+        # Industry/category match
+        if business_owner.get("industry"):
+            filter_query["category"] = {"$regex": business_owner["industry"], "$options": "i"}
+        
+        # Location match
+        if business_owner.get("location"):
+            filter_query["location"] = {"$regex": business_owner["location"], "$options": "i"}
+        
+        # Get creators and filter by follower count
+        cursor = db.creators.find(filter_query).limit(limit * 2)  # Get more to filter
+        creators = await cursor.to_list(length=limit * 2)
+        
+        # Filter by follower requirements
+        min_followers = business_owner.get("min_followers", 0)
+        max_followers = business_owner.get("max_followers", 1000000)
+        preferred_platforms = business_owner.get("preferred_platforms", [])
+        
+        matched_creators = []
+        for creator in creators:
+            creator_parsed = parse_from_mongo(creator)
+            if not creator_parsed:
+                continue
+            
+            # Calculate total followers across preferred platforms
+            total_followers = 0
+            platform_match = False
+            
+            if not preferred_platforms or "instagram" in preferred_platforms:
+                total_followers += creator_parsed.get("instagram_followers", 0)
+                platform_match = True
+            if not preferred_platforms or "youtube" in preferred_platforms:
+                total_followers += creator_parsed.get("youtube_subscribers", 0)
+                platform_match = True
+            if not preferred_platforms or "twitter" in preferred_platforms:
+                total_followers += creator_parsed.get("twitter_followers", 0)
+                platform_match = True
+            if not preferred_platforms or "tiktok" in preferred_platforms:
+                total_followers += creator_parsed.get("tiktok_followers", 0)
+                platform_match = True
+            if not preferred_platforms or "snapchat" in preferred_platforms:
+                total_followers += creator_parsed.get("snapchat_followers", 0)
+                platform_match = True
+            
+            # Check if creator meets requirements
+            if (platform_match and 
+                min_followers <= total_followers <= max_followers):
+                
+                creator_parsed["total_followers"] = total_followers
+                creator_parsed["match_score"] = calculate_business_match_score(creator_parsed, business_owner)
+                matched_creators.append(Creator(**creator_parsed))
+        
+        # Sort by match score and return top matches
+        matched_creators.sort(key=lambda x: x.dict().get("match_score", 0), reverse=True)
+        return matched_creators[:limit]
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error matching creators: {str(e)}")
+
+def calculate_business_match_score(creator, business_owner):
+    """Calculate match score between creator and business owner"""
+    score = 0
+    
+    # Category match
+    if (business_owner.get("industry", "").lower() in 
+        creator.get("category", "").lower()):
+        score += 30
+    
+    # Location match
+    if (business_owner.get("location", "").lower() in 
+        creator.get("location", "").lower()):
+        score += 20
+    
+    # Verification bonus
+    if creator.get("verification_status"):
+        score += 15
+    
+    # Highlight package bonus
+    package = creator.get("highlight_package")
+    if package == "platinum":
+        score += 20
+    elif package == "gold":
+        score += 15
+    elif package == "silver":
+        score += 10
+    
+    # Follower range match
+    total_followers = creator.get("total_followers", 0)
+    min_req = business_owner.get("min_followers", 0)
+    max_req = business_owner.get("max_followers", 1000000)
+    
+    if min_req <= total_followers <= max_req:
+        # Bonus for being in sweet spot (not too low, not too high)
+        mid_point = (min_req + max_req) / 2
+        distance_from_mid = abs(total_followers - mid_point) / (max_req - min_req)
+        score += int(15 * (1 - distance_from_mid))  # 0-15 points based on how close to middle
+    
+    return score
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
