@@ -4,6 +4,7 @@ import AuthModal from './components/AuthModal';
 import AdminPanel from './components/AdminPanel';
 import SubscriptionModal from './components/SubscriptionModal';
 import VerificationModal from './components/VerificationModal';
+import BusinessOwners from './components/BusinessOwners';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInstagram, faYoutube, faTwitter, faTiktok, faSnapchat } from '@fortawesome/free-brands-svg-icons';
 
