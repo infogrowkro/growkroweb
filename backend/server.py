@@ -708,6 +708,307 @@ async def get_platform_stats():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching stats: {str(e)}")
 
+# Admin Panel Routes
+
+# 2.1 User Management
+@app.post("/api/admin/creators/{creator_id}/approve")
+async def approve_creator(creator_id: str, action: AdminAction):
+    """Approve/reject/suspend creator profiles"""
+    try:
+        creator = await db.creators.find_one({"id": creator_id})
+        if not creator:
+            raise HTTPException(status_code=404, detail="Creator not found")
+        
+        update_data = {
+            "profile_status": action.action,
+            "admin_notes": action.notes,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        if action.action == "approve":
+            update_data["profile_status"] = "approved"
+        elif action.action == "reject":
+            update_data["profile_status"] = "rejected"
+        elif action.action == "suspend":
+            update_data["profile_status"] = "suspended"
+        elif action.action == "activate":
+            update_data["profile_status"] = "approved"
+        
+        await db.creators.update_one(
+            {"id": creator_id},
+            {"$set": update_data}
+        )
+        
+        return {"message": f"Creator {action.action}d successfully", "status": action.action}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error updating creator status: {str(e)}")
+
+@app.get("/api/admin/creators/pending")
+async def get_pending_creators():
+    """Get creators pending approval"""
+    try:
+        cursor = db.creators.find({"profile_status": "pending"})
+        creators = await cursor.to_list(length=None)
+        
+        parsed_creators = []
+        for creator in creators:
+            parsed_creator = parse_from_mongo(creator)
+            if parsed_creator:
+                parsed_creators.append(Creator(**parsed_creator))
+        
+        return parsed_creators
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching pending creators: {str(e)}")
+
+@app.get("/api/admin/users/stats")
+async def get_user_management_stats():
+    """Get user management statistics"""
+    try:
+        total_creators = await db.creators.count_documents({})
+        pending_approval = await db.creators.count_documents({"profile_status": "pending"})
+        approved_creators = await db.creators.count_documents({"profile_status": "approved"})
+        rejected_creators = await db.creators.count_documents({"profile_status": "rejected"})
+        suspended_creators = await db.creators.count_documents({"profile_status": "suspended"})
+        
+        return {
+            "total_creators": total_creators,
+            "pending_approval": pending_approval,
+            "approved_creators": approved_creators,
+            "rejected_creators": rejected_creators,
+            "suspended_creators": suspended_creators
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching user stats: {str(e)}")
+
+# 2.2 Financial Management
+@app.get("/api/admin/financial/transactions")
+async def get_all_transactions(
+    limit: Optional[int] = 50,
+    skip: Optional[int] = 0,
+    status: Optional[str] = None
+):
+    """Get all payment transactions"""
+    try:
+        filter_query = {}
+        if status:
+            filter_query["status"] = status
+        
+        cursor = db.payment_transactions.find(filter_query).skip(skip).limit(limit).sort("created_at", -1)
+        transactions = await cursor.to_list(length=limit)
+        
+        parsed_transactions = []
+        for transaction in transactions:
+            parsed_transaction = parse_from_mongo(transaction)
+            if parsed_transaction:
+                parsed_transactions.append(PaymentTransaction(**parsed_transaction))
+        
+        total_transactions = await db.payment_transactions.count_documents(filter_query)
+        
+        return {
+            "transactions": parsed_transactions,
+            "total": total_transactions,
+            "page": skip // limit + 1 if limit > 0 else 1
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching transactions: {str(e)}")
+
+@app.get("/api/admin/financial/revenue")
+async def get_revenue_stats():
+    """Get revenue statistics"""
+    try:
+        # Get completed transactions
+        completed_transactions = await db.payment_transactions.find({"status": "completed"}).to_list(length=None)
+        
+        total_revenue = 0
+        subscription_revenue = 0
+        verification_revenue = 0
+        package_revenue = 0
+        
+        for transaction in completed_transactions:
+            amount = transaction.get("amount", 0) / 100  # Convert paise to rupees
+            total_revenue += amount
+            
+            payment_type = transaction.get("payment_type", "")
+            if payment_type == "subscription":
+                subscription_revenue += amount
+            elif payment_type == "verification":
+                verification_revenue += amount
+            elif payment_type == "highlight_package":
+                package_revenue += amount
+        
+        return {
+            "total_revenue": total_revenue,
+            "subscription_revenue": subscription_revenue,
+            "verification_revenue": verification_revenue,
+            "package_revenue": package_revenue,
+            "total_transactions": len(completed_transactions)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching revenue stats: {str(e)}")
+
+# 2.3 Content & Community Management
+@app.get("/api/admin/content/reports")
+async def get_content_reports():
+    """Get content reports and flagged accounts"""
+    try:
+        # For demo purposes, return mock data
+        # In production, this would connect to actual reports collection
+        return {
+            "spam_reports": 5,
+            "flagged_profiles": 2,
+            "content_violations": 1,
+            "pending_reviews": 8
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching content reports: {str(e)}")
+
+# 2.4 Analytics & Reports
+@app.get("/api/admin/analytics/dashboard")
+async def get_analytics_dashboard():
+    """Get comprehensive analytics dashboard"""
+    try:
+        # User Growth
+        total_creators = await db.creators.count_documents({})
+        active_creators = await db.creators.count_documents({"profile_status": "approved"})
+        
+        # Revenue Analytics
+        completed_transactions = await db.payment_transactions.find({"status": "completed"}).to_list(length=None)
+        total_revenue = sum(t.get("amount", 0) for t in completed_transactions) / 100
+        
+        # Engagement Metrics
+        verified_creators = await db.creators.count_documents({"verification_status": True})
+        premium_creators = await db.creators.count_documents({"highlight_package": {"$ne": None}})
+        
+        return {
+            "user_growth": {
+                "total_creators": total_creators,
+                "active_creators": active_creators,
+                "growth_rate": "12%"  # Mock data
+            },
+            "revenue_metrics": {
+                "total_revenue": total_revenue,
+                "monthly_revenue": total_revenue * 0.3,  # Mock calculation
+                "transaction_count": len(completed_transactions)
+            },
+            "engagement_metrics": {
+                "verified_creators": verified_creators,
+                "premium_creators": premium_creators,
+                "collaboration_requests": 45  # Mock data
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching analytics: {str(e)}")
+
+# 2.5 Notifications & Communication
+@app.post("/api/admin/notifications/send")
+async def send_notification(notification: NotificationRequest):
+    """Send notifications to users"""
+    try:
+        # For demo purposes, simulate notification sending
+        # In production, this would integrate with push notification services
+        
+        target_count = 0
+        if notification.target == "all":
+            target_count = await db.creators.count_documents({})
+        elif notification.target == "subscribed":
+            # Would filter subscribed users
+            target_count = 50  # Mock data
+        elif notification.target == "creators":
+            target_count = await db.creators.count_documents({"profile_status": "approved"})
+        elif notification.target == "specific_users":
+            target_count = len(notification.user_ids)
+        
+        # Store notification in database
+        notification_doc = {
+            "id": str(uuid.uuid4()),
+            "title": notification.title,
+            "message": notification.message,
+            "target": notification.target,
+            "target_count": target_count,
+            "sent_at": datetime.now(timezone.utc).isoformat(),
+            "status": "sent"
+        }
+        
+        await db.notifications.insert_one(notification_doc)
+        
+        return {
+            "message": "Notification sent successfully",
+            "target_count": target_count,
+            "notification_id": notification_doc["id"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error sending notification: {str(e)}")
+
+@app.get("/api/admin/notifications/history")
+async def get_notification_history(limit: Optional[int] = 20):
+    """Get notification history"""
+    try:
+        cursor = db.notifications.find({}).sort("sent_at", -1).limit(limit)
+        notifications = await cursor.to_list(length=limit)
+        
+        return notifications
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching notification history: {str(e)}")
+
+# 2.6 Verification & Compliance
+@app.post("/api/admin/verification/otp")
+async def send_verification_otp(email: str):
+    """Send OTP for verification"""
+    try:
+        # Generate OTP
+        otp = str(uuid.uuid4())[:6].upper()
+        
+        # Store OTP in database
+        otp_doc = {
+            "email": email,
+            "otp": otp,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "expires_at": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat(),
+            "verified": False
+        }
+        
+        await db.otps.insert_one(otp_doc)
+        
+        # In production, send OTP via email/SMS
+        return {
+            "message": "OTP sent successfully",
+            "otp": otp  # Remove in production
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error sending OTP: {str(e)}")
+
+@app.post("/api/admin/verification/verify-otp")
+async def verify_otp(email: str, otp: str):
+    """Verify OTP"""
+    try:
+        otp_doc = await db.otps.find_one({
+            "email": email,
+            "otp": otp,
+            "verified": False
+        })
+        
+        if not otp_doc:
+            raise HTTPException(status_code=400, detail="Invalid OTP")
+        
+        # Check if OTP is expired
+        expires_at = datetime.fromisoformat(otp_doc["expires_at"])
+        if datetime.now(timezone.utc) > expires_at:
+            raise HTTPException(status_code=400, detail="OTP expired")
+        
+        # Mark OTP as verified
+        await db.otps.update_one(
+            {"_id": otp_doc["_id"]},
+            {"$set": {"verified": True}}
+        )
+        
+        return {"message": "OTP verified successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error verifying OTP: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
