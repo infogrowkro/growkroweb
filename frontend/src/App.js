@@ -135,6 +135,42 @@ function App() {
     }
   };
 
+  const handleSubscription = async (planType = 'annual') => {
+    try {
+      // For demo purposes - simulate subscription payment
+      const updatedUser = {
+        ...user,
+        isSubscribed: true,
+        subscriptionType: planType,
+        subscriptionDate: new Date().toISOString(),
+        subscriptionExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year from now
+      };
+      
+      localStorage.setItem('growkro_user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      setShowSubscriptionModal(false);
+      alert('Subscription activated successfully! You can now access all creator features.');
+    } catch (error) {
+      console.error('Subscription error:', error);
+      alert('Subscription failed. Please try again.');
+    }
+  };
+
+  const checkSubscriptionAccess = () => {
+    if (!user) {
+      alert('Please sign up first to access creator features');
+      handleLogin('signup');
+      return false;
+    }
+    
+    if (!user.isSubscribed) {
+      setShowSubscriptionModal(true);
+      return false;
+    }
+    
+    return true;
+  };
+
   const HomePage = () => (
     <div className="homepage">
       {/* Hero Section */}
