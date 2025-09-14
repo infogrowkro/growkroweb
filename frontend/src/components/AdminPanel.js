@@ -173,22 +173,46 @@ const AdminPanel = ({ onClose }) => {
 
         <div className="admin-tabs">
           <button 
-            className={`admin-tab ${activeTab === 'creators' ? 'active' : ''}`}
-            onClick={() => setActiveTab('creators')}
+            className={`admin-tab ${activeTab === 'dashboard' ? 'active' : ''}`}
+            onClick={() => handleTabChange('dashboard')}
           >
-            Creators ({stats.total_creators || 0})
+            📊 Dashboard
           </button>
           <button 
-            className={`admin-tab ${activeTab === 'stats' ? 'active' : ''}`}
-            onClick={() => setActiveTab('stats')}
+            className={`admin-tab ${activeTab === 'users' ? 'active' : ''}`}
+            onClick={() => handleTabChange('users')}
           >
-            Statistics
+            👥 Users ({userStats.pending_approval || 0})
           </button>
           <button 
-            className={`admin-tab ${activeTab === 'packages' ? 'active' : ''}`}
-            onClick={() => setActiveTab('packages')}
+            className={`admin-tab ${activeTab === 'financial' ? 'active' : ''}`}
+            onClick={() => handleTabChange('financial')}
           >
-            Packages
+            💰 Financial
+          </button>
+          <button 
+            className={`admin-tab ${activeTab === 'content' ? 'active' : ''}`}
+            onClick={() => handleTabChange('content')}
+          >
+            📝 Content
+          </button>
+          <button 
+            className={`admin-tab ${activeTab === 'analytics' ? 'active' : ''}`}
+            onClick={() => handleTabChange('analytics')}
+          >
+            📈 Analytics
+          </button>
+          <button 
+            className={`admin-tab ${activeTab === 'notifications' ? 'active' : ''}`}
+            onClick={() => handleTabChange('notifications')}
+          >
+            🔔 Notifications
+          </button>
+          <button 
+            className={`admin-tab ${activeTab === 'verification' ? 'active' : ''}`}
+            onClick={() => handleTabChange('verification')}
+          >
+            ✅ Verification
           </button>
         </div>
 
