@@ -25,6 +25,8 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [selectedCreatorForVerification, setSelectedCreatorForVerification] = useState(null);
   const [authType, setAuthType] = useState('login');
 
   // Blog/CMS states
