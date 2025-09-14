@@ -841,6 +841,11 @@ body {
     font-size: 0.9rem;
   }
   
+  .logo-image {
+    height: 40px;
+    max-width: 120px;
+  }
+  
   .features-grid,
   .pricing-grid,
   .creators-grid {
