@@ -586,7 +586,7 @@ function App() {
                     rel="noopener noreferrer"
                     className="social-link instagram"
                   >
-                    <span className="social-icon">📸</span>
+                    <FontAwesomeIcon icon={faInstagram} className="social-icon" />
                     <div>
                       <div className="social-handle">@{selectedCreator.instagram_handle}</div>
                       <div className="social-followers">
@@ -603,7 +603,7 @@ function App() {
                     rel="noopener noreferrer"
                     className="social-link youtube"
                   >
-                    <span className="social-icon">🎥</span>
+                    <FontAwesomeIcon icon={faYoutube} className="social-icon" />
                     <div>
                       <div className="social-handle">@{selectedCreator.youtube_handle}</div>
                       <div className="social-followers">
@@ -620,7 +620,7 @@ function App() {
                     rel="noopener noreferrer"
                     className="social-link twitter"
                   >
-                    <span className="social-icon">🐦</span>
+                    <FontAwesomeIcon icon={faTwitter} className="social-icon" />
                     <div>
                       <div className="social-handle">@{selectedCreator.twitter_handle}</div>
                       <div className="social-followers">
@@ -637,7 +637,7 @@ function App() {
                     rel="noopener noreferrer"
                     className="social-link tiktok"
                   >
-                    <span className="social-icon">🎵</span>
+                    <FontAwesomeIcon icon={faTiktok} className="social-icon" />
                     <div>
                       <div className="social-handle">@{selectedCreator.tiktok_handle}</div>
                       <div className="social-followers">
@@ -654,7 +654,7 @@ function App() {
                     rel="noopener noreferrer"
                     className="social-link snapchat"
                   >
-                    <span className="social-icon">👻</span>
+                    <FontAwesomeIcon icon={faSnapchat} className="social-icon" />
                     <div>
                       <div className="social-handle">@{selectedCreator.snapchat_handle}</div>
                       <div className="social-followers">
