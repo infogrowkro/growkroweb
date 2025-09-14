@@ -853,6 +853,12 @@ function App() {
             Blog
           </button>
           <button 
+            className={`nav-link ${currentPage === 'business' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('business')}
+          >
+            Business
+          </button>
+          <button 
             className={`nav-link ${currentPage === 'contact' ? 'active' : ''}`}
             onClick={() => setCurrentPage('contact')}
           >
