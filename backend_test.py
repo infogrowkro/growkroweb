@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-GrowKro Creator Profile System Backend API Tests
-Tests all creator CRUD operations, search, filtering, packages, and statistics
+GrowKro Razorpay Integration Tests - URGENT PRIORITY
+Tests updated Razorpay integration with new Merchant ID D9M2ydmYnhqKOD
+Focus: Payment API Testing, Razorpay Client Verification, Order Creation
 """
 
 import requests
@@ -12,6 +13,10 @@ import time
 
 # Get backend URL from environment
 BACKEND_URL = "https://contentmaker-hub.preview.emergentagent.com/api"
+
+# Expected Razorpay Configuration
+EXPECTED_MERCHANT_ID = "D9M2ydmYnhqKOD"
+EXPECTED_SECRET = "78nPPUWyWTYLpLhxmETVyxqJ"
 
 class GrowKroAPITester:
     def __init__(self):
