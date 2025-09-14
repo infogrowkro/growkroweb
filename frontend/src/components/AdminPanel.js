@@ -4,96 +4,162 @@ import './AdminPanel.css';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
 const AdminPanel = ({ onClose }) => {
-  const [activeTab, setActiveTab] = useState('creators');
-  const [creators, setCreators] = useState([]);
-  const [stats, setStats] = useState({});
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [loading, setLoading] = useState(false);
+  
+  // Data states for different modules
+  const [dashboardData, setDashboardData] = useState({});
+  const [userStats, setUserStats] = useState({});
+  const [pendingCreators, setPendingCreators] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [revenueStats, setRevenueStats] = useState({});
+  const [contentReports, setContentReports] = useState({});
+  const [analyticsData, setAnalyticsData] = useState({});
+  const [notificationHistory, setNotificationHistory] = useState([]);
+
+  // Notification form state
+  const [notificationForm, setNotificationForm] = useState({
+    title: '',
+    message: '',
+    target: 'all'
+  });
 
   useEffect(() => {
-    fetchStats();
-    if (activeTab === 'creators') {
-      fetchCreators();
-    }
-  }, [activeTab]);
+    fetchInitialData();
+  }, []);
 
-  const fetchCreators = async () => {
-    setLoading(true);
+  const fetchInitialData = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/creators`);
-      if (response.ok) {
-        const data = await response.json();
-        setCreators(data);
+      // Fetch dashboard analytics
+      const analyticsResponse = await fetch(`${BACKEND_URL}/api/admin/analytics/dashboard`);
+      if (analyticsResponse.ok) {
+        const analytics = await analyticsResponse.json();
+        setAnalyticsData(analytics);
+      }
+
+      // Fetch user stats
+      const userStatsResponse = await fetch(`${BACKEND_URL}/api/admin/users/stats`);
+      if (userStatsResponse.ok) {
+        const stats = await userStatsResponse.json();
+        setUserStats(stats);
       }
     } catch (error) {
-      console.error('Error fetching creators:', error);
-    }
-    setLoading(false);
-  };
-
-  const fetchStats = async () => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/stats`);
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-      }
-    } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error('Error fetching initial data:', error);
     }
   };
 
-  const handleVerifyCreator = async (creatorId) => {
+  const fetchPendingCreators = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/creators/${creatorId}`, {
-        method: 'PUT',
+      const response = await fetch(`${BACKEND_URL}/api/admin/creators/pending`);
+      if (response.ok) {
+        const creators = await response.json();
+        setPendingCreators(creators);
+      }
+    } catch (error) {
+      console.error('Error fetching pending creators:', error);
+    }
+  };
+
+  const fetchTransactions = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/admin/financial/transactions`);
+      if (response.ok) {
+        const data = await response.json();
+        setTransactions(data.transactions);
+      }
+
+      const revenueResponse = await fetch(`${BACKEND_URL}/api/admin/financial/revenue`);
+      if (revenueResponse.ok) {
+        const revenue = await revenueResponse.json();
+        setRevenueStats(revenue);
+      }
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  };
+
+  const fetchContentReports = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/admin/content/reports`);
+      if (response.ok) {
+        const reports = await response.json();
+        setContentReports(reports);
+      }
+    } catch (error) {
+      console.error('Error fetching content reports:', error);
+    }
+  };
+
+  const fetchNotificationHistory = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/admin/notifications/history`);
+      if (response.ok) {
+        const history = await response.json();
+        setNotificationHistory(history);
+      }
+    } catch (error) {
+      console.error('Error fetching notification history:', error);
+    }
+  };
+
+  const handleCreatorAction = async (creatorId, action, notes = '') => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/admin/creators/${creatorId}/approve`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ verification_status: true })
+        body: JSON.stringify({ creator_id: creatorId, action, notes })
       });
-      
+
       if (response.ok) {
-        alert('Creator verified successfully!');
-        fetchCreators();
-        fetchStats();
+        alert(`Creator ${action}d successfully!`);
+        fetchPendingCreators();
+        fetchInitialData();
       }
     } catch (error) {
-      console.error('Error verifying creator:', error);
-      alert('Error verifying creator');
+      console.error('Error handling creator action:', error);
+      alert('Error processing action');
     }
   };
 
-  const handleUpgradePackage = async (creatorId, packageId) => {
+  const sendNotification = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/creators/${creatorId}/upgrade-package/${packageId}`, {
-        method: 'POST'
+      const response = await fetch(`${BACKEND_URL}/api/admin/notifications/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(notificationForm)
       });
-      
+
       if (response.ok) {
-        alert(`Creator upgraded to ${packageId} package!`);
-        fetchCreators();
-        fetchStats();
+        const result = await response.json();
+        alert(`Notification sent to ${result.target_count} users!`);
+        setNotificationForm({ title: '', message: '', target: 'all' });
+        fetchNotificationHistory();
       }
     } catch (error) {
-      console.error('Error upgrading package:', error);
-      alert('Error upgrading package');
+      console.error('Error sending notification:', error);
+      alert('Error sending notification');
     }
   };
 
-  const handleDeleteCreator = async (creatorId) => {
-    if (window.confirm('Are you sure you want to delete this creator?')) {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/creators/${creatorId}`, {
-          method: 'DELETE'
-        });
-        
-        if (response.ok) {
-          alert('Creator deleted successfully!');
-          fetchCreators();
-          fetchStats();
-        }
-      } catch (error) {
-        console.error('Error deleting creator:', error);
-        alert('Error deleting creator');
-      }
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    
+    // Fetch data based on tab
+    switch (tab) {
+      case 'users':
+        fetchPendingCreators();
+        break;
+      case 'financial':
+        fetchTransactions();
+        break;
+      case 'content':
+        fetchContentReports();
+        break;
+      case 'notifications':
+        fetchNotificationHistory();
+        break;
+      default:
+        break;
     }
   };
 
