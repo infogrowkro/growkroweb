@@ -545,6 +545,115 @@ function App() {
       </footer>
     </div>
   );
+
+  const BlogPage = () => (
+    <div className="blog-page">
+      <div className="container">
+        <div className="page-header">
+          <h1>Creator Resources & Blog</h1>
+          <p>Tips, strategies, and insights to grow your content reach</p>
+        </div>
+
+        <div className="blog-grid">
+          {blogPosts.map((post) => (
+            <article key={post.id} className="blog-card">
+              <div className="blog-image">
+                <img src={post.image} alt={post.title} />
+                <div className="blog-category">{post.category}</div>
+              </div>
+              <div className="blog-content">
+                <h3 className="blog-title">{post.title}</h3>
+                <p className="blog-excerpt">{post.excerpt}</p>
+                <div className="blog-meta">
+                  <span className="blog-author">By {post.author}</span>
+                  <span className="blog-date">{new Date(post.date).toLocaleDateString()}</span>
+                </div>
+                <button className="blog-read-more">Read More</button>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="blog-categories">
+          <h3>Browse by Category</h3>
+          <div className="category-tags">
+            <button className="category-tag active">All Posts</button>
+            <button className="category-tag">Growth Tips</button>
+            <button className="category-tag">Collaboration</button>
+            <button className="category-tag">Monetization</button>
+            <button className="category-tag">Tech Reviews</button>
+            <button className="category-tag">Social Media</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const ContactPage = () => (
+    <div className="contact-page">
+      <div className="container">
+        <div className="page-header">
+          <h1>Contact & Support</h1>
+          <p>Get in touch with our team for any questions or support</p>
+        </div>
+
+        <div className="contact-grid">
+          <div className="contact-info">
+            <h3>Get in Touch</h3>
+            <div className="contact-item">
+              <div className="contact-icon">📧</div>
+              <div>
+                <strong>Email Support</strong>
+                <p>hello@growkro.com</p>
+              </div>
+            </div>
+            <div className="contact-item">
+              <div className="contact-icon">📱</div>
+              <div>
+                <strong>WhatsApp Support</strong>
+                <p>+91 99999 99999</p>
+                <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer" className="whatsapp-btn">
+                  Chat on WhatsApp
+                </a>
+              </div>
+            </div>
+            <div className="contact-item">
+              <div className="contact-icon">🕒</div>
+              <div>
+                <strong>Support Hours</strong>
+                <p>Monday - Friday: 9 AM - 6 PM IST</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="contact-form">
+            <h3>Send us a Message</h3>
+            <form className="support-form">
+              <div className="form-row">
+                <input type="text" placeholder="Your Name" required className="form-input" />
+                <input type="email" placeholder="Your Email" required className="form-input" />
+              </div>
+              <select className="form-input" required>
+                <option value="">Select Topic</option>
+                <option value="general">General Inquiry</option>
+                <option value="technical">Technical Support</option>
+                <option value="billing">Billing Question</option>
+                <option value="partnership">Partnership</option>
+                <option value="bug">Bug Report</option>
+              </select>
+              <textarea 
+                placeholder="Your Message" 
+                required 
+                className="form-textarea"
+                rows="5"
+              ></textarea>
+              <button type="submit" className="btn btn-primary">Send Message</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default App;
