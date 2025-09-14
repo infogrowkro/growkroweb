@@ -47,15 +47,27 @@ class Creator(BaseModel):
     name: str
     email: str
     bio: Optional[str] = ""
+    # Social Media Handles and Followers
     instagram_handle: Optional[str] = ""
-    youtube_handle: Optional[str] = ""
     instagram_followers: Optional[int] = 0
+    youtube_handle: Optional[str] = ""
     youtube_subscribers: Optional[int] = 0
+    twitter_handle: Optional[str] = ""
+    twitter_followers: Optional[int] = 0
+    tiktok_handle: Optional[str] = ""
+    tiktok_followers: Optional[int] = 0
+    snapchat_handle: Optional[str] = ""
+    snapchat_followers: Optional[int] = 0
+    # Profile Information
     highlight_package: Optional[str] = None  # silver, gold, platinum
     verification_status: bool = False
     profile_picture: Optional[str] = ""
     location: Optional[str] = ""
     category: Optional[str] = ""  # fashion, tech, lifestyle, food, etc.
+    # Admin Management Fields
+    profile_status: str = "pending"  # pending, approved, rejected, suspended
+    admin_notes: Optional[str] = ""
+    # Timestamps
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -64,9 +76,15 @@ class CreatorCreate(BaseModel):
     email: str
     bio: Optional[str] = ""
     instagram_handle: Optional[str] = ""
-    youtube_handle: Optional[str] = ""
     instagram_followers: Optional[int] = 0
+    youtube_handle: Optional[str] = ""
     youtube_subscribers: Optional[int] = 0
+    twitter_handle: Optional[str] = ""
+    twitter_followers: Optional[int] = 0
+    tiktok_handle: Optional[str] = ""
+    tiktok_followers: Optional[int] = 0
+    snapchat_handle: Optional[str] = ""
+    snapchat_followers: Optional[int] = 0
     location: Optional[str] = ""
     category: Optional[str] = ""
 
@@ -74,12 +92,29 @@ class CreatorUpdate(BaseModel):
     name: Optional[str] = None
     bio: Optional[str] = None
     instagram_handle: Optional[str] = None
-    youtube_handle: Optional[str] = None
     instagram_followers: Optional[int] = None
+    youtube_handle: Optional[str] = None
     youtube_subscribers: Optional[int] = None
+    twitter_handle: Optional[str] = None
+    twitter_followers: Optional[int] = None
+    tiktok_handle: Optional[str] = None
+    tiktok_followers: Optional[int] = None
+    snapchat_handle: Optional[str] = None
+    snapchat_followers: Optional[int] = None
     location: Optional[str] = None
     category: Optional[str] = None
     profile_picture: Optional[str] = None
+
+class AdminAction(BaseModel):
+    creator_id: str
+    action: str  # approve, reject, suspend, activate
+    notes: Optional[str] = ""
+
+class NotificationRequest(BaseModel):
+    title: str
+    message: str
+    target: str = "all"  # all, subscribed, creators, specific_users
+    user_ids: Optional[List[str]] = []
 
 class HighlightPackage(BaseModel):
     id: str
