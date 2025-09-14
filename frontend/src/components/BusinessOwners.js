@@ -155,9 +155,6 @@ const BusinessOwners = ({ user }) => {
         <div className="business-header">
           <h1>🏢 Business & Brand Collaborations</h1>
           <p>Connect with content creators for authentic brand partnerships</p>
-          <div className="coming-soon-badge">
-            Coming January 2024 Update
-          </div>
         </div>
 
         <div className="business-tabs">
