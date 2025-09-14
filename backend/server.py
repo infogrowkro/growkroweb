@@ -90,25 +90,33 @@ class PaymentTransaction(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: Optional[str] = None
     user_email: Optional[str] = None
-    session_id: str
+    order_id: str  # Razorpay order ID
+    payment_id: Optional[str] = None  # Razorpay payment ID
     payment_type: str  # subscription, verification, highlight_package
-    amount: float
-    currency: str = "inr"
+    amount: int  # Amount in paise (multiply by 100)
+    currency: str = "INR"
     status: str = "pending"  # pending, completed, failed, cancelled
-    payment_status: str = "unpaid"  # unpaid, paid, failed
+    payment_status: str = "created"  # created, authorized, captured, refunded, failed
     metadata: Optional[Dict] = {}
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-class SubscriptionRequest(BaseModel):
-    plan_type: str = "annual"
-    success_url: str
-    cancel_url: str
+class PaymentOrderRequest(BaseModel):
+    payment_type: str  # subscription, verification, highlight_package
+    package_id: Optional[str] = None  # For highlight packages
+    creator_id: Optional[str] = None  # For verification
+    amount: Optional[int] = None  # For custom amounts (in paise)
 
-class VerificationRequest(BaseModel):
-    creator_id: str
-    success_url: str
-    cancel_url: str
+class PaymentOrderResponse(BaseModel):
+    order_id: str
+    amount: int
+    currency: str
+    key_id: str
+
+class PaymentVerificationRequest(BaseModel):
+    order_id: str
+    payment_id: str
+    signature: str
 
 # Helper functions
 def prepare_for_mongo(data):
