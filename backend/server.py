@@ -116,6 +116,68 @@ class NotificationRequest(BaseModel):
     target: str = "all"  # all, subscribed, creators, specific_users
     user_ids: Optional[List[str]] = []
 
+class BusinessOwner(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    company_name: str
+    company_description: Optional[str] = ""
+    industry: str  # fashion, tech, food, lifestyle, etc.
+    location: Optional[str] = ""
+    budget_range: str  # low, medium, high, custom
+    collaboration_type: str  # sponsored_posts, product_reviews, brand_ambassador, events
+    target_audience: Optional[str] = ""
+    preferred_platforms: List[str] = []  # instagram, youtube, twitter, tiktok, snapchat
+    min_followers: Optional[int] = 0
+    max_followers: Optional[int] = 1000000
+    contact_phone: Optional[str] = ""
+    website: Optional[str] = ""
+    verified_business: bool = False
+    profile_status: str = "pending"  # pending, approved, rejected, suspended
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class BusinessOwnerCreate(BaseModel):
+    name: str
+    email: str
+    company_name: str
+    company_description: Optional[str] = ""
+    industry: str
+    location: Optional[str] = ""
+    budget_range: str = "medium"
+    collaboration_type: str
+    target_audience: Optional[str] = ""
+    preferred_platforms: List[str] = []
+    min_followers: Optional[int] = 0
+    max_followers: Optional[int] = 1000000
+    contact_phone: Optional[str] = ""
+    website: Optional[str] = ""
+
+class CollaborationRequest(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    business_owner_id: str
+    creator_id: str
+    campaign_title: str
+    campaign_description: str
+    collaboration_type: str
+    budget_amount: Optional[float] = None
+    duration_days: Optional[int] = 30
+    requirements: List[str] = []
+    status: str = "pending"  # pending, accepted, rejected, completed, cancelled
+    creator_response: Optional[str] = ""
+    business_response: Optional[str] = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class CollaborationRequestCreate(BaseModel):
+    creator_id: str
+    campaign_title: str
+    campaign_description: str
+    collaboration_type: str
+    budget_amount: Optional[float] = None
+    duration_days: Optional[int] = 30
+    requirements: List[str] = []
+
 class HighlightPackage(BaseModel):
     id: str
     name: str
