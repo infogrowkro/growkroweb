@@ -781,25 +781,59 @@ body {
 }
 
 .social-link:hover {
-  border-color: #667eea;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
+.social-link .social-icon {
+  font-size: 1.5rem;
+  min-width: 24px;
+}
+
+/* Social Media Brand Colors for Links */
+.social-link.instagram .social-icon {
+  color: #E4405F;
+}
+
 .social-link.instagram:hover {
   border-color: #E4405F;
+  background: rgba(228, 64, 95, 0.05);
+}
+
+.social-link.youtube .social-icon {
+  color: #FF0000;
+}
+
+.social-link.youtube:hover {
+  border-color: #FF0000;
+  background: rgba(255, 0, 0, 0.05);
+}
+
+.social-link.twitter .social-icon {
+  color: #1DA1F2;
 }
 
 .social-link.twitter:hover {
   border-color: #1DA1F2;
+  background: rgba(29, 161, 242, 0.05);
+}
+
+.social-link.tiktok .social-icon {
+  color: #000000;
 }
 
 .social-link.tiktok:hover {
   border-color: #000000;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.social-link.snapchat .social-icon {
+  color: #FFFC00;
 }
 
 .social-link.snapchat:hover {
   border-color: #FFFC00;
+  background: rgba(255, 252, 0, 0.05);
 }
 
 .social-handle {
