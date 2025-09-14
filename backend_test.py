@@ -894,3 +894,12 @@ class GrowKroAPITester:
         print(f"\n📈 Success Rate: {success_rate:.1f}%")
         
         return self.test_results
+if __name__ == "__main__":
+    import sys
+    tester = GrowKroAPITester()
+    
+    # Check if we should run only payment tests
+    if len(sys.argv) > 1 and sys.argv[1] == "payments":
+        results = tester.run_payment_tests_only()
+    else:
+        results = tester.run_all_tests()
