@@ -121,6 +121,7 @@ class HighlightPackage(BaseModel):
     name: str
     price: int
     duration_days: int
+    min_instagram_followers: int
     features: List[str]
     color: str
     description: str
