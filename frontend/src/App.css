@@ -758,8 +758,16 @@ body {
   border-color: #E4405F;
 }
 
-.social-link.youtube:hover {
-  border-color: #FF0000;
+.social-link.twitter:hover {
+  border-color: #1DA1F2;
+}
+
+.social-link.tiktok:hover {
+  border-color: #000000;
+}
+
+.social-link.snapchat:hover {
+  border-color: #FFFC00;
 }
 
 .social-handle {
