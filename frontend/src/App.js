@@ -457,13 +457,46 @@ function App() {
           {creator.instagram_handle && (
             <div className="social-stat">
               <span className="social-icon">📸</span>
-              <span>{creator.instagram_followers.toLocaleString()}</span>
+              <div className="social-details">
+                <span className="social-handle">@{creator.instagram_handle}</span>
+                <span className="social-count">{creator.instagram_followers.toLocaleString()}</span>
+              </div>
             </div>
           )}
           {creator.youtube_handle && (
             <div className="social-stat">
               <span className="social-icon">🎥</span>
-              <span>{creator.youtube_subscribers.toLocaleString()}</span>
+              <div className="social-details">
+                <span className="social-handle">@{creator.youtube_handle}</span>
+                <span className="social-count">{creator.youtube_subscribers.toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+          {creator.twitter_handle && (
+            <div className="social-stat">
+              <span className="social-icon">🐦</span>
+              <div className="social-details">
+                <span className="social-handle">@{creator.twitter_handle}</span>
+                <span className="social-count">{creator.twitter_followers.toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+          {creator.tiktok_handle && (
+            <div className="social-stat">
+              <span className="social-icon">🎵</span>
+              <div className="social-details">
+                <span className="social-handle">@{creator.tiktok_handle}</span>
+                <span className="social-count">{creator.tiktok_followers.toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+          {creator.snapchat_handle && (
+            <div className="social-stat">
+              <span className="social-icon">👻</span>
+              <div className="social-details">
+                <span className="social-handle">@{creator.snapchat_handle}</span>
+                <span className="social-count">{creator.snapchat_followers.toLocaleString()}</span>
+              </div>
             </div>
           )}
         </div>
