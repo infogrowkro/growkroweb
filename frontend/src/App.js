@@ -114,6 +114,26 @@ function App() {
     setLoading(false);
   };
 
+  // Auth functions
+  const handleLogin = (type = 'login') => {
+    setAuthType(type);
+    setShowAuthModal(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('growkro_user');
+    setUser(null);
+    alert('Logged out successfully!');
+  };
+
+  const openAdminPanel = () => {
+    if (user && user.isAdmin) {
+      setShowAdminPanel(true);
+    } else {
+      alert('Admin access required');
+    }
+  };
+
   const HomePage = () => (
     <div className="homepage">
       {/* Hero Section */}
