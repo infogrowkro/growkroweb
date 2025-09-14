@@ -38,14 +38,15 @@ const AuthModal = ({ isOpen, onClose, type: initialType = 'login' }) => {
           id: Date.now().toString(),
           name: formData.name,
           email: formData.email,
-          isCreator: false
+          isCreator: false,
+          isAdmin: formData.email.includes('admin'), // Simple admin check for demo
+          isSubscribed: false // New users start without subscription
         };
         
         // Store demo user
         localStorage.setItem('growkro_user', JSON.stringify(userData));
-        alert('Account created successfully! You can now log in.');
-        setType('login');
-        setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+        alert('Account created successfully! Please subscribe to access creator features.');
+        window.location.reload(); // Refresh to update auth state
       } else {
         // For demo - simulate login
         const savedUser = localStorage.getItem('growkro_user');
