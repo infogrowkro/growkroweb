@@ -194,8 +194,8 @@ function App() {
       <section className="hero-section">
         <div className="hero-background">
           <img 
-            src="https://images.pexels.com/photos/5475810/pexels-photo-5475810.jpeg" 
-            alt="Content creators collaborating"
+            src="https://images.unsplash.com/photo-1636971828014-0f3493cba88a" 
+            alt="Professional content creator workspace"
             className="hero-bg-image"
           />
           <div className="hero-overlay"></div>
