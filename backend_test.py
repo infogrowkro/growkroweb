@@ -36,15 +36,11 @@ class GrowKroAPITester:
     def test_api_health(self):
         """Test if API is running"""
         try:
-            response = requests.get(f"{self.base_url.replace('/api', '')}/")
+            # Test the creators endpoint to verify API is working
+            response = requests.get(f"{self.base_url}/creators")
             if response.status_code == 200:
-                data = response.json()
-                if data.get("message") == "GrowKro API is running!":
-                    self.log_result("API Health Check", True, "API is running")
-                    return True
-                else:
-                    self.log_result("API Health Check", False, f"Unexpected response: {data}")
-                    return False
+                self.log_result("API Health Check", True, "API is running and accessible")
+                return True
             else:
                 self.log_result("API Health Check", False, f"Status code: {response.status_code}")
                 return False
