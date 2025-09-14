@@ -302,10 +302,36 @@ const AdminPanel = ({ onClose }) => {
                         <h5>{creator.name}</h5>
                         <p>{creator.email} • {creator.category} • {creator.location}</p>
                         <div className="social-summary">
-                          {creator.instagram_handle && <span>📸 {creator.instagram_followers.toLocaleString()}</span>}
-                          {creator.youtube_handle && <span>🎥 {creator.youtube_subscribers.toLocaleString()}</span>}
-                          {creator.twitter_handle && <span>🐦 {creator.twitter_followers.toLocaleString()}</span>}
-                          {creator.tiktok_handle && <span>🎵 {creator.tiktok_followers.toLocaleString()}</span>}
+                          {creator.instagram_handle && (
+                            <span className="admin-social-stat">
+                              <FontAwesomeIcon icon={faInstagram} style={{color: '#E4405F'}} />
+                              {creator.instagram_followers.toLocaleString()}
+                            </span>
+                          )}
+                          {creator.youtube_handle && (
+                            <span className="admin-social-stat">
+                              <FontAwesomeIcon icon={faYoutube} style={{color: '#FF0000'}} />
+                              {creator.youtube_subscribers.toLocaleString()}
+                            </span>
+                          )}
+                          {creator.twitter_handle && (
+                            <span className="admin-social-stat">
+                              <FontAwesomeIcon icon={faTwitter} style={{color: '#1DA1F2'}} />
+                              {creator.twitter_followers.toLocaleString()}
+                            </span>
+                          )}
+                          {creator.tiktok_handle && (
+                            <span className="admin-social-stat">
+                              <FontAwesomeIcon icon={faTiktok} style={{color: '#000000'}} />
+                              {creator.tiktok_followers.toLocaleString()}
+                            </span>
+                          )}
+                          {creator.snapchat_handle && (
+                            <span className="admin-social-stat">
+                              <FontAwesomeIcon icon={faSnapchat} style={{color: '#FFFC00'}} />
+                              {creator.snapchat_followers.toLocaleString()}
+                            </span>
+                          )}
                         </div>
                         <p className="creator-bio">{creator.bio}</p>
                       </div>
