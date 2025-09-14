@@ -399,7 +399,7 @@ async def get_package(package_id: str):
 
 @app.post("/api/creators/{creator_id}/upgrade-package/{package_id}")
 async def upgrade_creator_package(creator_id: str, package_id: str):
-    """Upgrade creator's highlight package"""
+    """Upgrade creator's highlight package with follower validation"""
     try:
         # Verify package exists
         package = next((p for p in HIGHLIGHT_PACKAGES if p["id"] == package_id), None)
@@ -411,6 +411,16 @@ async def upgrade_creator_package(creator_id: str, package_id: str):
         if not creator:
             raise HTTPException(status_code=404, detail="Creator not found")
         
+        # Check Instagram follower requirement
+        instagram_followers = creator.get("instagram_followers", 0)
+        min_required = package.get("min_instagram_followers", 0)
+        
+        if instagram_followers < min_required:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Insufficient Instagram followers. Required: {min_required:,}, Current: {instagram_followers:,}"
+            )
+        
         # Update creator's package
         await db.creators.update_one(
             {"id": creator_id},
@@ -420,11 +430,42 @@ async def upgrade_creator_package(creator_id: str, package_id: str):
             }}
         )
         
-        return {"message": f"Creator upgraded to {package['name']} successfully"}
+        return {
+            "message": f"Creator upgraded to {package['name']} successfully",
+            "package": package_id,
+            "required_followers": min_required,
+            "creator_followers": instagram_followers
+        }
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error upgrading package: {str(e)}")
+
+@app.get("/api/creators/by-package/{package_id}")
+async def get_creators_by_package(package_id: str, limit: Optional[int] = 10):
+    """Get creators by highlight package for homepage showcase"""
+    try:
+        if package_id not in ["silver", "gold", "platinum"]:
+            raise HTTPException(status_code=400, detail="Invalid package type")
+        
+        cursor = db.creators.find({
+            "highlight_package": package_id,
+            "profile_status": "approved"
+        }).limit(limit).sort("instagram_followers", -1)  # Sort by follower count
+        
+        creators = await cursor.to_list(length=limit)
+        
+        parsed_creators = []
+        for creator in creators:
+            parsed_creator = parse_from_mongo(creator)
+            if parsed_creator:
+                parsed_creators.append(Creator(**parsed_creator))
+        
+        return parsed_creators
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching creators by package: {str(e)}")
 
 # Search and Discovery Routes
 @app.get("/api/search/creators")
