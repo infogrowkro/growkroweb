@@ -338,12 +338,7 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus:
-    - "Payment Pricing API"
-    - "Create Payment Order API"
-    - "Payment Verification API"
-    - "Transaction Status API"
-    - "Razorpay Integration"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
