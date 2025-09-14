@@ -639,7 +639,18 @@ function App() {
           
           {user ? (
             <div className="user-menu">
-              <span className="user-name">Hello, {user.name}! 👋</span>
+              <span className="user-name">
+                Hello, {user.name}! 👋
+                {user.isSubscribed && <span className="subscription-badge">Premium</span>}
+              </span>
+              {!user.isSubscribed && (
+                <button 
+                  className="btn btn-primary nav-btn"
+                  onClick={() => setShowSubscriptionModal(true)}
+                >
+                  Subscribe ₹49/year
+                </button>
+              )}
               {user.isAdmin && (
                 <button 
                   className="btn btn-secondary nav-btn"
