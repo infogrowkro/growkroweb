@@ -2,11 +2,12 @@ from fastapi import FastAPI, HTTPException, Request, Response, Cookie, Header
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Dict
 import os
 from datetime import datetime, timezone
 import uuid
 import json
+from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 
 # Initialize FastAPI app
 app = FastAPI(title="GrowKro API", version="1.0.0")
