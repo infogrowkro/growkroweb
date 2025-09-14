@@ -395,7 +395,7 @@ body {
 
 .features-list li::before {
   content: "✓ ";
-  color: #6bcf7f;
+  color: #667eea;
   font-weight: bold;
   margin-right: 0.5rem;
 }
