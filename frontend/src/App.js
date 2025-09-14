@@ -1033,6 +1033,7 @@ function App() {
         {currentPage === 'creators' && <CreatorsPage />}
         {currentPage === 'profile' && <ProfilePage />}
         {currentPage === 'blog' && <BlogPage />}
+        {currentPage === 'business' && <BusinessOwners user={user} />}
         {currentPage === 'contact' && <ContactPage />}
       </main>
       
