@@ -387,9 +387,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Multi-Platform Social Media Integration"
-    - "Admin Panel APIs"
-    - "Profile Status Management"
+    - "Updated Highlight Packages System"
+    - "Instagram Follower Validation System"
+    - "Updated Package Pricing API"
+    - "Creators by Package Endpoint"
+    - "Annual Subscription Duration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
