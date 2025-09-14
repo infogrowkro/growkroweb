@@ -497,9 +497,9 @@ test_plan:
 
   - task: "Updated Razorpay Integration with Production Keys"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/.env"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -509,6 +509,9 @@ test_plan:
         - working: true
           agent: "testing"
           comment: "✅ FULLY FUNCTIONAL - Updated Razorpay integration with production keys working perfectly! All payment APIs now functional: GET /api/payments/pricing (✅ all pricing correct), POST /api/payments/create-order (✅ creates orders with production key rzp_live_RHeQe0z3rj1DNW), POST /api/payments/verify (✅ processes verification requests), GET /api/payments/transaction/{order_id} (✅ retrieves transaction status). Razorpay client successfully initialized with production credentials. All payment types working: subscription (₹49), verification (₹199), highlight packages (Silver ₹1999, Gold ₹4999, Platinum ₹9999). Success rate: 97.1% (34/35 tests passed)."
+        - working: false
+          agent: "testing"
+          comment: "❌ AUTHENTICATION FAILED - Updated Razorpay integration with new merchant ID D9M2ydmYnhqKOD is failing authentication. TESTED: GET /api/payments/pricing (✅ working - returns correct pricing for subscription ₹49, verification ₹199), but POST /api/payments/create-order (❌ failing with 'Authentication failed' error). Current credentials: RAZORPAY_KEY_ID=D9M2ydmYnhqKOD, RAZORPAY_KEY_SECRET=78nPPUWyWTYLpLhxmETVyxqJ. Razorpay client initialization succeeds but order creation fails with BadRequestError: Authentication failed. API structure is correct, but credentials appear to be invalid or expired. Success rate: 50% (6/12 tests passed). CRITICAL: Need valid Razorpay credentials to resolve payment gateway errors."
 
   - task: "Business Owners API Routes"
     implemented: true
