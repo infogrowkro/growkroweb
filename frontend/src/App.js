@@ -814,6 +814,13 @@ function App() {
         onClose={() => setShowAuthModal(false)}
         type={authType}
       />
+
+      <SubscriptionModal
+        isOpen={showSubscriptionModal}
+        onClose={() => setShowSubscriptionModal(false)}
+        onSubscribe={handleSubscription}
+        user={user}
+      />
       
       {showAdminPanel && (
         <AdminPanel onClose={() => setShowAdminPanel(false)} />
