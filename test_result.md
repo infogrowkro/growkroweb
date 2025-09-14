@@ -394,6 +394,66 @@ test_plan:
   test_all: false
   test_priority: "high_first"
 
+  - task: "Updated Highlight Packages System"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated highlight packages with new pricing structure: Silver ₹1,999 (20K+ Instagram followers), Gold ₹4,999 (100K+ Instagram followers), Platinum ₹9,999 (500K+ Instagram followers). All packages now have 365-day annual subscriptions. Instagram follower validation system implemented."
+
+  - task: "Instagram Follower Validation System"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Follower validation system implemented in package upgrade endpoint. Checks Instagram follower requirements: Silver (20K+), Gold (100K+), Platinum (500K+). Returns appropriate error messages for insufficient followers."
+
+  - task: "Annual Subscription Duration"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "All highlight packages updated to 365-day duration for annual subscriptions. Package definitions include duration_days: 365 for all tiers."
+
+  - task: "Updated Package Pricing API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Payment pricing API updated with new package amounts: Silver ₹1,999 (199900 paise), Gold ₹4,999 (499900 paise), Platinum ₹9,999 (999900 paise). Pricing endpoint returns updated amounts in both paise and INR formats."
+
+  - task: "Creators by Package Endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "GET /api/creators/by-package/{package_id} endpoint implemented to retrieve creators by highlight package for homepage showcase. Filters by approved status and sorts by Instagram follower count."
+
 agent_communication:
     - agent: "testing"
       message: "Completed comprehensive backend API testing for GrowKro Creator Profile System. All 28 test cases passed with 100% success rate. The system is fully functional with proper CRUD operations, search/filtering, package management, statistics, and robust error handling. Sample data (Priya Sharma with Gold package, Rahul Tech, Meera Foodie) is working correctly. Ready for production use."
@@ -407,3 +467,5 @@ agent_communication:
       message: "✅ PAYMENT TESTING COMPLETED - Tested all 5 Razorpay payment integration tasks. Payment Pricing API works perfectly (6/6 tests passed). Transaction Status API handles errors correctly. The main limitation is Razorpay authentication failing with demo credentials - this is expected and would work with valid production credentials. Fixed critical environment variable loading issue by adding python-dotenv. API structure, input validation, and error handling are all correctly implemented. Success rate: 63.6% (14/22 tests passed), with failures primarily due to authentication constraints."
     - agent: "testing"
       message: "✅ ENHANCED PLATFORM TESTING COMPLETED - Comprehensive testing of enhanced GrowKro platform with 96.7% success rate (29/30 tests passed). Successfully tested: Multi-Platform Social Media Integration (5 platforms: Instagram, YouTube, Twitter, TikTok, Snapchat), Profile Status Management (pending/approved/rejected/suspended), Complete Admin Panel APIs (User Management, Financial Management, Content Management, Analytics Dashboard, Notifications System, Verification & Compliance), and Enhanced Creator Data Retrieval. Only minor issue: Notification History API has ObjectId serialization issue (known MongoDB limitation). All core enhanced features are fully functional and ready for production."
+    - agent: "main"
+      message: "Updated GrowKro highlight packages system with new pricing and Instagram follower requirements. Added 5 new backend tasks for testing: Updated Highlight Packages System, Instagram Follower Validation System, Annual Subscription Duration, Updated Package Pricing API, and Creators by Package Endpoint. All tasks implemented and ready for comprehensive testing with specific test scenarios."
