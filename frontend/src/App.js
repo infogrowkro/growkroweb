@@ -547,8 +547,20 @@ function App() {
         {currentPage === 'home' && <HomePage />}
         {currentPage === 'creators' && <CreatorsPage />}
         {currentPage === 'profile' && <ProfilePage />}
-        {currentPage === 'pricing' && <HomePage />} {/* Pricing is in homepage */}
+        {currentPage === 'blog' && <BlogPage />}
+        {currentPage === 'contact' && <ContactPage />}
       </main>
+      
+      {/* Modals */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        type={authType}
+      />
+      
+      {showAdminPanel && (
+        <AdminPanel onClose={() => setShowAdminPanel(false)} />
+      )}
       
       <footer className="footer">
         <div className="container">
