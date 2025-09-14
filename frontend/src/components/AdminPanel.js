@@ -217,75 +217,121 @@ const AdminPanel = ({ onClose }) => {
         </div>
 
         <div className="admin-content">
-          {activeTab === 'creators' && (
-            <div className="creators-management">
-              <h3>Creator Management</h3>
-              {loading ? (
-                <div className="admin-loading">Loading creators...</div>
-              ) : (
-                <div className="creators-table">
-                  {creators.length > 0 ? (
-                    creators.map((creator) => (
-                      <div key={creator.id} className="creator-row">
-                        <div className="creator-info">
-                          <div className="creator-name">
-                            {creator.name}
-                            {creator.verification_status && (
-                              <span className="verified-badge">✅ Verified</span>
-                            )}
-                          </div>
-                          <div className="creator-details">
-                            {creator.email} • {creator.category} • {creator.location}
-                          </div>
-                          <div className="creator-stats">
-                            📸 {creator.instagram_followers?.toLocaleString() || 0} • 
-                            🎥 {creator.youtube_subscribers?.toLocaleString() || 0}
-                          </div>
-                          {creator.highlight_package && (
-                            <div className={`package-badge ${creator.highlight_package}`}>
-                              {creator.highlight_package.toUpperCase()}
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="creator-actions">
-                          {!creator.verification_status && (
-                            <button 
-                              className="action-btn verify-btn"
-                              onClick={() => handleVerifyCreator(creator.id)}
-                            >
-                              Verify
-                            </button>
-                          )}
-                          
-                          <select 
-                            onChange={(e) => {
-                              if (e.target.value) {
-                                handleUpgradePackage(creator.id, e.target.value);
-                                e.target.value = '';
-                              }
-                            }}
-                            className="package-select"
-                          >
-                            <option value="">Upgrade Package</option>
-                            <option value="silver">Silver (₹4999)</option>
-                            <option value="gold">Gold (₹9999)</option>
-                            <option value="platinum">Platinum (₹9999)</option>
-                          </select>
-                          
-                          <button 
-                            className="action-btn delete-btn"
-                            onClick={() => handleDeleteCreator(creator.id)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="no-creators">No creators found</div>
-                  )}
+          {/* Dashboard Overview */}
+          {activeTab === 'dashboard' && (
+            <div className="dashboard-overview">
+              <h3>Platform Overview</h3>
+              <div className="overview-stats">
+                <div className="stat-card">
+                  <div className="stat-number">{analyticsData.user_growth?.total_creators || 0}</div>
+                  <div className="stat-label">Total Creators</div>
                 </div>
+                <div className="stat-card">
+                  <div className="stat-number">₹{analyticsData.revenue_metrics?.total_revenue || 0}</div>
+                  <div className="stat-label">Total Revenue</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">{userStats.pending_approval || 0}</div>
+                  <div className="stat-label">Pending Approvals</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">{analyticsData.engagement_metrics?.verified_creators || 0}</div>
+                  <div className="stat-label">Verified Creators</div>
+                </div>
+              </div>
+              
+              <div className="recent-activity">
+                <h4>Recent Activity</h4>
+                <div className="activity-list">
+                  <div className="activity-item">
+                    <span className="activity-icon">👤</span>
+                    <span>New creator registration - Pending approval</span>
+                    <span className="activity-time">2 hours ago</span>
+                  </div>
+                  <div className="activity-item">
+                    <span className="activity-icon">💰</span>
+                    <span>Payment received - Subscription</span>
+                    <span className="activity-time">4 hours ago</span>
+                  </div>
+                  <div className="activity-item">
+                    <span className="activity-icon">✅</span>
+                    <span>Creator verified - Profile approved</span>
+                    <span className="activity-time">6 hours ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* User Management */}
+          {activeTab === 'users' && (
+            <div className="user-management">
+              <h3>User Management</h3>
+              
+              <div className="user-stats-grid">
+                <div className="stat-card">
+                  <div className="stat-number">{userStats.total_creators || 0}</div>
+                  <div className="stat-label">Total Creators</div>
+                </div>
+                <div className="stat-card pending">
+                  <div className="stat-number">{userStats.pending_approval || 0}</div>
+                  <div className="stat-label">Pending Approval</div>
+                </div>
+                <div className="stat-card approved">
+                  <div className="stat-number">{userStats.approved_creators || 0}</div>
+                  <div className="stat-label">Approved</div>
+                </div>
+                <div className="stat-card rejected">
+                  <div className="stat-number">{userStats.rejected_creators || 0}</div>
+                  <div className="stat-label">Rejected</div>
+                </div>
+                <div className="stat-card suspended">
+                  <div className="stat-number">{userStats.suspended_creators || 0}</div>
+                  <div className="stat-label">Suspended</div>
+                </div>
+              </div>
+
+              <h4>Pending Approvals</h4>
+              {pendingCreators.length > 0 ? (
+                <div className="pending-creators-list">
+                  {pendingCreators.map((creator) => (
+                    <div key={creator.id} className="pending-creator-card">
+                      <div className="creator-info">
+                        <h5>{creator.name}</h5>
+                        <p>{creator.email} • {creator.category} • {creator.location}</p>
+                        <div className="social-summary">
+                          {creator.instagram_handle && <span>📸 {creator.instagram_followers.toLocaleString()}</span>}
+                          {creator.youtube_handle && <span>🎥 {creator.youtube_subscribers.toLocaleString()}</span>}
+                          {creator.twitter_handle && <span>🐦 {creator.twitter_followers.toLocaleString()}</span>}
+                          {creator.tiktok_handle && <span>🎵 {creator.tiktok_followers.toLocaleString()}</span>}
+                        </div>
+                        <p className="creator-bio">{creator.bio}</p>
+                      </div>
+                      <div className="approval-actions">
+                        <button 
+                          className="approve-btn"
+                          onClick={() => handleCreatorAction(creator.id, 'approve')}
+                        >
+                          ✅ Approve
+                        </button>
+                        <button 
+                          className="reject-btn"
+                          onClick={() => handleCreatorAction(creator.id, 'reject', 'Profile rejected by admin')}
+                        >
+                          ❌ Reject
+                        </button>
+                        <button 
+                          className="suspend-btn"
+                          onClick={() => handleCreatorAction(creator.id, 'suspend', 'Profile suspended for review')}
+                        >
+                          ⏸️ Suspend
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="no-pending">No pending approvals</div>
               )}
             </div>
           )}
