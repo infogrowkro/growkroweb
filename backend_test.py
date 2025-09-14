@@ -824,6 +824,73 @@ class GrowKroAPITester:
             except Exception as e:
                 print(f"⚠️ Error deleting test creator: {str(e)}")
 
-if __name__ == "__main__":
-    tester = GrowKroAPITester()
-    results = tester.run_all_tests()
+    def run_all_tests(self):
+        """Run all tests in sequence"""
+        print("🚀 Starting GrowKro Creator Profile System Backend Tests")
+        print(f"🔗 Testing API at: {self.base_url}")
+        print("=" * 60)
+        
+        # Check API health first
+        if not self.test_api_health():
+            print("❌ API is not accessible. Stopping tests.")
+            return self.test_results
+        
+        # Run all tests
+        self.test_create_creator()
+        self.test_get_creators()
+        self.test_get_creator_by_id()
+        self.test_update_creator()
+        self.test_search_creators()
+        self.test_filter_creators()
+        self.test_highlight_packages()
+        self.test_upgrade_packages()
+        self.test_platform_statistics()
+        self.test_delete_creator()  # Cleanup
+        
+        # Print summary
+        print("\n" + "=" * 60)
+        print("📊 TEST SUMMARY")
+        print("=" * 60)
+        print(f"✅ Passed: {self.test_results['passed']}")
+        print(f"❌ Failed: {self.test_results['failed']}")
+        
+        if self.test_results['errors']:
+            print("\n🔍 FAILED TESTS:")
+            for error in self.test_results['errors']:
+                print(f"   • {error}")
+        
+        success_rate = (self.test_results['passed'] / (self.test_results['passed'] + self.test_results['failed'])) * 100
+        print(f"\n📈 Success Rate: {success_rate:.1f}%")
+        
+        return self.test_results
+
+    def run_payment_tests_only(self):
+        """Run only payment-related tests"""
+        print("💳 Starting GrowKro Payment Integration Tests")
+        print(f"🔗 Testing Payment APIs at: {self.base_url}")
+        print("=" * 60)
+        
+        # Check API health first
+        if not self.test_api_health():
+            print("❌ API is not accessible. Stopping tests.")
+            return self.test_results
+        
+        # Run payment tests
+        self.run_payment_tests()
+        
+        # Print summary
+        print("\n" + "=" * 60)
+        print("📊 PAYMENT TESTS SUMMARY")
+        print("=" * 60)
+        print(f"✅ Passed: {self.test_results['passed']}")
+        print(f"❌ Failed: {self.test_results['failed']}")
+        
+        if self.test_results['errors']:
+            print("\n🔍 FAILED TESTS:")
+            for error in self.test_results['errors']:
+                print(f"   • {error}")
+        
+        success_rate = (self.test_results['passed'] / (self.test_results['passed'] + self.test_results['failed'])) * 100
+        print(f"\n📈 Success Rate: {success_rate:.1f}%")
+        
+        return self.test_results
