@@ -488,14 +488,52 @@ function App() {
             Creators
           </button>
           <button 
-            className={`nav-link ${currentPage === 'pricing' ? 'active' : ''}`}
-            onClick={() => setCurrentPage('pricing')}
+            className={`nav-link ${currentPage === 'blog' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('blog')}
           >
-            Pricing
+            Blog
           </button>
-          <button className="btn btn-primary nav-btn">
-            Sign Up
+          <button 
+            className={`nav-link ${currentPage === 'contact' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('contact')}
+          >
+            Contact
           </button>
+          
+          {user ? (
+            <div className="user-menu">
+              <span className="user-name">Hello, {user.name}! 👋</span>
+              {user.isAdmin && (
+                <button 
+                  className="btn btn-secondary nav-btn"
+                  onClick={openAdminPanel}
+                >
+                  Admin Panel
+                </button>
+              )}
+              <button 
+                className="btn btn-outline nav-btn"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="auth-buttons">
+              <button 
+                className="btn btn-outline nav-btn"
+                onClick={() => handleLogin('login')}
+              >
+                Sign In
+              </button>
+              <button 
+                className="btn btn-primary nav-btn"
+                onClick={() => handleLogin('signup')}
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
