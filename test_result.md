@@ -471,6 +471,30 @@ test_plan:
           agent: "testing"
           comment: "✅ FULLY FUNCTIONAL - Creators by package endpoint working correctly. Successfully retrieves creators by package type (silver, gold, platinum). Properly filters by approved status and sorts by Instagram follower count. Invalid package IDs correctly rejected with 400 status. Endpoint ready for homepage showcase functionality."
 
+  - task: "Updated Razorpay Integration with Production Keys"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated Razorpay credentials with production keys: RAZORPAY_KEY_ID=rzp_live_RHeQe0z3rj1DNW and RAZORPAY_KEY_SECRET=78nPPUWyWTYLpLhxmETVyxqJ. Payment integration should now work with real credentials instead of demo keys that were failing authentication."
+
+  - task: "Business Owners API Routes"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Business Owners API routes already implemented: GET /api/business-owners (browse), POST /api/business-owners (register), GET /api/creators/match-business/{business_id} (find matches), POST /api/collaboration-requests (send collaboration request). All routes support business registration, matching with creators, and collaboration requests functionality."
+
 agent_communication:
     - agent: "testing"
       message: "Completed comprehensive backend API testing for GrowKro Creator Profile System. All 28 test cases passed with 100% success rate. The system is fully functional with proper CRUD operations, search/filtering, package management, statistics, and robust error handling. Sample data (Priya Sharma with Gold package, Rahul Tech, Meera Foodie) is working correctly. Ready for production use."
