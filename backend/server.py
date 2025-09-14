@@ -7,7 +7,9 @@ import os
 from datetime import datetime, timezone
 import uuid
 import json
-from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
+import razorpay
+import hmac
+import hashlib
 
 # Initialize FastAPI app
 app = FastAPI(title="GrowKro API", version="1.0.0")
