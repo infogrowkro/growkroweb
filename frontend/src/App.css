@@ -45,6 +45,20 @@ body {
 
 .nav-logo {
   cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 50px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.logo-image:hover {
+  transform: scale(1.05);
 }
 
 .logo-text {
