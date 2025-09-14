@@ -1,7 +1,93 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './SubscriptionModal.css';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+
 const SubscriptionModal = ({ isOpen, onClose, onSubscribe, user }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleRazorpayPayment = async (planType) => {
+    setIsProcessing(true);
+    
+    try {
+      // Create payment order
+      const orderResponse = await fetch(`${BACKEND_URL}/api/payments/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          payment_type: 'subscription',
+          amount: planType === 'annual' ? 4900 : 4900 // ₹49 in paise
+        })
+      });
+
+      if (!orderResponse.ok) {
+        throw new Error('Failed to create payment order');
+      }
+
+      const orderData = await orderResponse.json();
+
+      // Initialize Razorpay
+      const options = {
+        key: orderData.key_id,
+        amount: orderData.amount,
+        currency: 'INR',
+        name: 'GrowKro',
+        description: 'Annual Subscription - Access all creator features',
+        order_id: orderData.order_id,
+        handler: async (response) => {
+          try {
+            // Verify payment
+            const verifyResponse = await fetch(`${BACKEND_URL}/api/payments/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                order_id: response.razorpay_order_id,
+                payment_id: response.razorpay_payment_id,
+                signature: response.razorpay_signature
+              })
+            });
+
+            if (verifyResponse.ok) {
+              // Call the subscription success handler
+              await onSubscribe(planType);
+              alert('🎉 Subscription activated successfully! You now have access to all creator features.');
+              onClose();
+            } else {
+              throw new Error('Payment verification failed');
+            }
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            alert('Payment verification failed. Please contact support.');
+          }
+        },
+        prefill: user ? {
+          name: user.name,
+          email: user.email
+        } : {},
+        notes: {
+          user_id: user?.id,
+          user_email: user?.email
+        },
+        theme: {
+          color: '#667eea'
+        },
+        modal: {
+          ondismiss: () => {
+            setIsProcessing(false);
+          }
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment initialization failed. Please try again.');
+      setIsProcessing(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
