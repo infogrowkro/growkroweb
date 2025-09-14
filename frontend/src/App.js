@@ -416,7 +416,7 @@ function App() {
     );
   };
 
-  const CreatorCard = ({ creator, onClick }) => (
+  const CreatorCard = ({ creator, onClick, showMessageButton = false }) => (
     <div className="creator-card" onClick={onClick}>
       <div className="creator-avatar">
         {creator.profile_picture ? (
@@ -459,6 +459,18 @@ function App() {
           <div className={`highlight-badge ${creator.highlight_package}`}>
             {creator.highlight_package.toUpperCase()}
           </div>
+        )}
+
+        {showMessageButton && (
+          <button 
+            className="message-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              alert(`Messaging feature coming soon! You can message ${creator.name} directly.`);
+            }}
+          >
+            💬 Message
+          </button>
         )}
       </div>
     </div>
