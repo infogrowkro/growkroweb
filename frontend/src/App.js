@@ -575,6 +575,17 @@ function App() {
                 <>
                   <button className="btn btn-primary">Message Creator</button>
                   <button className="btn btn-secondary">Collaborate</button>
+                  {!selectedCreator.verification_status && (
+                    <button 
+                      className="btn btn-success"
+                      onClick={() => {
+                        setSelectedCreatorForVerification(selectedCreator);
+                        setShowVerificationModal(true);
+                      }}
+                    >
+                      Get Verified - ₹199
+                    </button>
+                  )}
                 </>
               ) : (
                 <div className="subscription-required-actions">
