@@ -187,56 +187,65 @@ PAYMENT_PRICING = {
         "description": "Get verified creator badge"
     },
     "highlight_package": {
-        "silver": 499900,  # ₹4999
-        "gold": 999900,    # ₹9999
-        "platinum": 999900 # ₹9999
+        "silver": 199900,   # ₹1,999
+        "gold": 499900,     # ₹4,999
+        "platinum": 999900  # ₹9,999
     }
 }
+
+# Predefined highlight packages
 HIGHLIGHT_PACKAGES = [
     {
         "id": "silver",
         "name": "Silver Highlight",
-        "price": 4999,
-        "duration_days": 30,
+        "price": 1999,
+        "duration_days": 365,  # Annual subscription
+        "min_instagram_followers": 20000,
         "features": [
-            "Profile highlighting for 30 days",
-            "Priority in search results",
-            "Silver badge on profile",
-            "Basic analytics"
+            "Must have 20K+ followers on Instagram",
+            "Silver Badge on Profile",
+            "Priority Search Results",
+            "Basic Analytics",
+            "No Business Promotion or Paid Collaboration"
         ],
         "color": "#C0C0C0",
-        "description": "Get noticed with our Silver highlight package"
+        "description": "Perfect for growing creators with 20K+ Instagram followers"
     },
     {
         "id": "gold",
         "name": "Gold Highlight", 
-        "price": 9999,
-        "duration_days": 60,
+        "price": 4999,
+        "duration_days": 365,  # Annual subscription
+        "min_instagram_followers": 100000,
         "features": [
-            "Profile highlighting for 60 days",
-            "Top priority in search results",
-            "Gold badge on profile",
-            "Advanced analytics",
-            "Featured in weekly newsletter"
+            "Must have 100K+ followers on Instagram",
+            "Gold Badge on Profile",
+            "Priority Search Results",
+            "Advanced Analytics",
+            "Featured in weekly newsletter",
+            "Assured Paid Collaboration"
         ],
         "color": "#FFD700",
-        "description": "Stand out with our premium Gold highlight package"
+        "description": "For established creators with 100K+ Instagram followers"
     },
     {
         "id": "platinum",
         "name": "Platinum Highlight",
         "price": 9999,
-        "duration_days": 90,
+        "duration_days": 365,  # Annual subscription
+        "min_instagram_followers": 500000,
         "features": [
-            "Profile highlighting for 90 days",
-            "Maximum priority in search results",
-            "Platinum badge on profile", 
-            "Premium analytics dashboard",
+            "Must have 500K+ followers on Instagram",
+            "Platinum Badge on Profile", 
+            "Priority Search Results",
+            "Premium Analytics Dashboard",
             "Featured in weekly newsletter",
+            "Assured Paid Collaboration",
+            "Assured Brand Deals",
             "Direct collaboration opportunities"
         ],
         "color": "#E5E4E2",
-        "description": "Ultimate visibility with our Platinum highlight package"
+        "description": "Ultimate package for top creators with 500K+ Instagram followers"
     }
 ]
 
