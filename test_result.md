@@ -414,11 +414,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Updated Highlight Packages System"
-    - "Instagram Follower Validation System"
-    - "Updated Package Pricing API"
-    - "Creators by Package Endpoint"
-    - "Annual Subscription Duration"
+    - "Updated Razorpay Integration with Production Keys"
+    - "Business Owners API Routes"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
