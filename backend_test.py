@@ -1324,8 +1324,16 @@ if __name__ == "__main__":
     import sys
     tester = GrowKroAPITester()
     
-    # Check if we should run only payment tests
-    if len(sys.argv) > 1 and sys.argv[1] == "payments":
-        results = tester.run_payment_tests_only()
+    # Check command line arguments for test type
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "payments":
+            results = tester.run_payment_tests_only()
+        elif sys.argv[1] == "admin":
+            results = tester.run_enhanced_admin_tests()
+        elif sys.argv[1] == "enhanced":
+            results = tester.run_all_enhanced_tests()
+        else:
+            results = tester.run_all_tests()
     else:
-        results = tester.run_all_tests()
+        # Default to enhanced tests for comprehensive testing
+        results = tester.run_all_enhanced_tests()
