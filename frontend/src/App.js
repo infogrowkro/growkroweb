@@ -274,87 +274,147 @@ function App() {
     </div>
   );
 
-  const CreatorsPage = () => (
-    <div className="creators-page">
-      <div className="container">
-        <div className="page-header">
-          <h1>Discover Creators</h1>
-          <p>Connect with talented content creators in your area</p>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="search-section">
-          <div className="search-bar">
-            <input
-              type="text"
-              placeholder="Search creators..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-            />
-            <button onClick={searchCreators} className="search-btn">
-              🔍
-            </button>
-          </div>
-          
-          <div className="filters">
-            <select 
-              value={filters.category} 
-              onChange={(e) => setFilters({...filters, category: e.target.value})}
-              className="filter-select"
-            >
-              <option value="">All Categories</option>
-              <option value="fashion">Fashion</option>
-              <option value="tech">Tech</option>
-              <option value="lifestyle">Lifestyle</option>
-              <option value="food">Food</option>
-              <option value="travel">Travel</option>
-              <option value="fitness">Fitness</option>
-            </select>
-            
-            <input
-              type="text"
-              placeholder="Location"
-              value={filters.location}
-              onChange={(e) => setFilters({...filters, location: e.target.value})}
-              className="filter-input"
-            />
-            
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={filters.verified_only}
-                onChange={(e) => setFilters({...filters, verified_only: e.target.checked})}
-              />
-              Verified Only
-            </label>
-          </div>
-        </div>
-
-        {/* Creators Grid */}
-        <div className="creators-grid">
-          {loading ? (
-            <div className="loading">Loading creators...</div>
-          ) : creators.length > 0 ? (
-            creators.map((creator) => (
-              <CreatorCard 
-                key={creator.id} 
-                creator={creator} 
-                onClick={() => {
-                  setSelectedCreator(creator);
-                  setCurrentPage('profile');
-                }}
-              />
-            ))
-          ) : (
-            <div className="no-results">
-              <p>No creators found. Try adjusting your search criteria.</p>
+  const CreatorsPage = () => {
+    // Check subscription access when trying to view creators
+    if (!user || !user.isSubscribed) {
+      return (
+        <div className="subscription-required">
+          <div className="container">
+            <div className="subscription-prompt">
+              <div className="subscription-icon">🔒</div>
+              <h2>Subscription Required</h2>
+              <p>To access creator profiles and messaging features, you need an active subscription.</p>
+              <div className="subscription-features">
+                <div className="feature-highlight">
+                  <span className="feature-icon">👥</span>
+                  <span>Browse All Creators</span>
+                </div>
+                <div className="feature-highlight">
+                  <span className="feature-icon">💬</span>
+                  <span>Direct Messaging</span>
+                </div>
+                <div className="feature-highlight">
+                  <span className="feature-icon">🔍</span>
+                  <span>Advanced Search</span>
+                </div>
+              </div>
+              {!user ? (
+                <div className="auth-prompt">
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => handleLogin('signup')}
+                  >
+                    Sign Up First
+                  </button>
+                  <p>Already have an account?{' '}
+                    <button 
+                      className="link-btn"
+                      onClick={() => handleLogin('login')}
+                    >
+                      Sign In
+                    </button>
+                  </p>
+                </div>
+              ) : (
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => setShowSubscriptionModal(true)}
+                >
+                  Subscribe Now - Only ₹49/year
+                </button>
+              )}
             </div>
-          )}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="creators-page">
+        <div className="container">
+          <div className="page-header">
+            <h1>Discover Creators</h1>
+            <p>Connect with talented content creators in your area</p>
+            <div className="subscription-status">
+              ✅ Subscribed • Premium Access Active
+            </div>
+          </div>
+
+          {/* Search and Filters */}
+          <div className="search-section">
+            <div className="search-bar">
+              <input
+                type="text"
+                placeholder="Search creators..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              <button onClick={searchCreators} className="search-btn">
+                🔍
+              </button>
+            </div>
+            
+            <div className="filters">
+              <select 
+                value={filters.category} 
+                onChange={(e) => setFilters({...filters, category: e.target.value})}
+                className="filter-select"
+              >
+                <option value="">All Categories</option>
+                <option value="fashion">Fashion</option>
+                <option value="tech">Tech</option>
+                <option value="lifestyle">Lifestyle</option>
+                <option value="food">Food</option>
+                <option value="travel">Travel</option>
+                <option value="fitness">Fitness</option>
+              </select>
+              
+              <input
+                type="text"
+                placeholder="Location"
+                value={filters.location}
+                onChange={(e) => setFilters({...filters, location: e.target.value})}
+                className="filter-input"
+              />
+              
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={filters.verified_only}
+                  onChange={(e) => setFilters({...filters, verified_only: e.target.checked})}
+                />
+                Verified Only
+              </label>
+            </div>
+          </div>
+
+          {/* Creators Grid */}
+          <div className="creators-grid">
+            {loading ? (
+              <div className="loading">Loading creators...</div>
+            ) : creators.length > 0 ? (
+              creators.map((creator) => (
+                <CreatorCard 
+                  key={creator.id} 
+                  creator={creator} 
+                  onClick={() => {
+                    setSelectedCreator(creator);
+                    setCurrentPage('profile');
+                  }}
+                  showMessageButton={true}
+                />
+              ))
+            ) : (
+              <div className="no-results">
+                <p>No creators found. Try adjusting your search criteria.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const CreatorCard = ({ creator, onClick }) => (
     <div className="creator-card" onClick={onClick}>
