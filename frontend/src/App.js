@@ -966,15 +966,15 @@ function App() {
               <div className="contact-icon">📧</div>
               <div>
                 <strong>Email Support</strong>
-                <p>hello@growkro.com</p>
+                <p>info@growkroindia.com</p>
               </div>
             </div>
             <div className="contact-item">
               <div className="contact-icon">📱</div>
               <div>
                 <strong>WhatsApp Support</strong>
-                <p>+91 99999 99999</p>
-                <a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer" className="whatsapp-btn">
+                <p>+91 8888 964 964</p>
+                <a href="https://wa.me/918888964964" target="_blank" rel="noopener noreferrer" className="whatsapp-btn">
                   Chat on WhatsApp
                 </a>
               </div>
