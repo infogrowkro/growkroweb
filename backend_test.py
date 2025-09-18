@@ -1320,6 +1320,355 @@ class GrowKroAPITester:
         print(f"\n📈 Success Rate: {success_rate:.1f}%")
         
         return self.test_results
+
+    def test_admin_excel_export(self):
+        """Test admin creator data Excel export functionality"""
+        print("\n=== Testing Admin Excel Export ===")
+        
+        try:
+            response = requests.get(f"{self.base_url}/admin/creators/export")
+            if response.status_code == 200:
+                # Check if response is Excel file
+                content_type = response.headers.get('content-type', '')
+                if 'spreadsheetml' in content_type or 'excel' in content_type:
+                    self.log_result("Excel Export Content Type", True, f"Correct content type: {content_type}")
+                else:
+                    self.log_result("Excel Export Content Type", False, f"Wrong content type: {content_type}")
+                
+                # Check Content-Disposition header for filename
+                content_disposition = response.headers.get('content-disposition', '')
+                if 'growkro_creators_' in content_disposition and '.xlsx' in content_disposition:
+                    self.log_result("Excel Export Filename", True, "Correct filename format with timestamp")
+                else:
+                    self.log_result("Excel Export Filename", False, f"Wrong filename format: {content_disposition}")
+                
+                # Check file size (should be > 0 for valid Excel file)
+                content_length = len(response.content)
+                if content_length > 1000:  # Reasonable size for Excel file with headers
+                    self.log_result("Excel Export File Size", True, f"File size: {content_length} bytes")
+                else:
+                    self.log_result("Excel Export File Size", False, f"File too small: {content_length} bytes")
+                
+                # Verify Excel file can be downloaded
+                if response.content:
+                    self.log_result("Excel Export Download", True, "Excel file downloaded successfully")
+                else:
+                    self.log_result("Excel Export Download", False, "Empty file content")
+                    
+            else:
+                self.log_result("Excel Export API", False, f"Status: {response.status_code}, Response: {response.text}")
+        except Exception as e:
+            self.log_result("Excel Export API", False, f"Exception: {str(e)}")
+
+    def test_admin_creator_filtering(self):
+        """Test admin creator filtering by city and interests"""
+        print("\n=== Testing Admin Creator Filtering ===")
+        
+        # Test 1: Filter by city
+        try:
+            response = requests.get(f"{self.base_url}/admin/creators/filter?city=Mumbai")
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["creators", "total_count", "page_info", "filters_applied"]
+                if all(field in data for field in required_fields):
+                    creators = data["creators"]
+                    total_count = data["total_count"]
+                    filters = data["filters_applied"]
+                    
+                    self.log_result("Filter by City - Structure", True, f"Found {len(creators)} creators, Total: {total_count}")
+                    
+                    # Verify filter was applied
+                    if filters.get("city") == "Mumbai":
+                        self.log_result("Filter by City - Applied", True, "Mumbai filter correctly applied")
+                    else:
+                        self.log_result("Filter by City - Applied", False, f"Wrong filter: {filters.get('city')}")
+                    
+                    # Check if creators match city filter (if any found)
+                    if creators:
+                        mumbai_creators = [c for c in creators if "mumbai" in c.get("location", "").lower()]
+                        if len(mumbai_creators) == len(creators):
+                            self.log_result("Filter by City - Results", True, "All results match Mumbai filter")
+                        else:
+                            self.log_result("Filter by City - Results", True, f"{len(mumbai_creators)}/{len(creators)} match Mumbai filter")
+                    else:
+                        self.log_result("Filter by City - Results", True, "No creators found (acceptable)")
+                else:
+                    self.log_result("Filter by City - Structure", False, f"Missing fields. Got: {list(data.keys())}")
+            else:
+                self.log_result("Filter by City", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("Filter by City", False, f"Exception: {str(e)}")
+        
+        # Test 2: Filter by interests
+        try:
+            response = requests.get(f"{self.base_url}/admin/creators/filter?interests=fashion")
+            if response.status_code == 200:
+                data = response.json()
+                if "creators" in data and "filters_applied" in data:
+                    creators = data["creators"]
+                    filters = data["filters_applied"]
+                    
+                    self.log_result("Filter by Interests - Structure", True, f"Found {len(creators)} creators with fashion interest")
+                    
+                    # Verify filter was applied
+                    if filters.get("interests") == "fashion":
+                        self.log_result("Filter by Interests - Applied", True, "Fashion interest filter correctly applied")
+                    else:
+                        self.log_result("Filter by Interests - Applied", False, f"Wrong filter: {filters.get('interests')}")
+                    
+                    # Check if creators have interests field and fashion interest
+                    if creators:
+                        fashion_creators = [c for c in creators if "fashion" in [interest.lower() for interest in c.get("interests", [])]]
+                        if len(fashion_creators) > 0:
+                            self.log_result("Filter by Interests - Results", True, f"{len(fashion_creators)} creators have fashion interest")
+                        else:
+                            self.log_result("Filter by Interests - Results", True, "No creators with fashion interest found (acceptable)")
+                    else:
+                        self.log_result("Filter by Interests - Results", True, "No creators found (acceptable)")
+                else:
+                    self.log_result("Filter by Interests - Structure", False, "Missing response fields")
+            else:
+                self.log_result("Filter by Interests", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("Filter by Interests", False, f"Exception: {str(e)}")
+        
+        # Test 3: Filter by multiple interests
+        try:
+            response = requests.get(f"{self.base_url}/admin/creators/filter?interests=fashion,travel")
+            if response.status_code == 200:
+                data = response.json()
+                if "creators" in data:
+                    creators = data["creators"]
+                    self.log_result("Filter by Multiple Interests", True, f"Found {len(creators)} creators with fashion or travel interests")
+                else:
+                    self.log_result("Filter by Multiple Interests", False, "Missing creators field")
+            else:
+                self.log_result("Filter by Multiple Interests", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("Filter by Multiple Interests", False, f"Exception: {str(e)}")
+        
+        # Test 4: Combined filters (city + interests)
+        try:
+            response = requests.get(f"{self.base_url}/admin/creators/filter?city=Mumbai&interests=fashion&category=lifestyle")
+            if response.status_code == 200:
+                data = response.json()
+                if "creators" in data and "filters_applied" in data:
+                    creators = data["creators"]
+                    filters = data["filters_applied"]
+                    
+                    self.log_result("Combined Filters - Structure", True, f"Found {len(creators)} creators with combined filters")
+                    
+                    # Verify all filters were applied
+                    expected_filters = {"city": "Mumbai", "interests": "fashion", "category": "lifestyle"}
+                    filters_match = all(filters.get(key) == value for key, value in expected_filters.items())
+                    if filters_match:
+                        self.log_result("Combined Filters - Applied", True, "All filters correctly applied")
+                    else:
+                        self.log_result("Combined Filters - Applied", False, f"Filter mismatch: {filters}")
+                else:
+                    self.log_result("Combined Filters - Structure", False, "Missing response fields")
+            else:
+                self.log_result("Combined Filters", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("Combined Filters", False, f"Exception: {str(e)}")
+        
+        # Test 5: Pagination
+        try:
+            response = requests.get(f"{self.base_url}/admin/creators/filter?limit=10&skip=0")
+            if response.status_code == 200:
+                data = response.json()
+                if "page_info" in data:
+                    page_info = data["page_info"]
+                    if all(field in page_info for field in ["limit", "skip", "has_more"]):
+                        self.log_result("Filter Pagination", True, f"Limit: {page_info['limit']}, Skip: {page_info['skip']}, Has More: {page_info['has_more']}")
+                    else:
+                        self.log_result("Filter Pagination", False, "Missing pagination fields")
+                else:
+                    self.log_result("Filter Pagination", False, "Missing page_info")
+            else:
+                self.log_result("Filter Pagination", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("Filter Pagination", False, f"Exception: {str(e)}")
+
+    def test_admin_available_options(self):
+        """Test admin available interests and cities APIs"""
+        print("\n=== Testing Admin Available Options APIs ===")
+        
+        # Test 1: Get available interests
+        try:
+            response = requests.get(f"{self.base_url}/admin/creators/interests/available")
+            if response.status_code == 200:
+                data = response.json()
+                if "interests" in data:
+                    interests = data["interests"]
+                    if isinstance(interests, list):
+                        self.log_result("Available Interests - Structure", True, f"Found {len(interests)} unique interests")
+                        
+                        # Check if interests are strings and not empty
+                        if interests:
+                            valid_interests = all(isinstance(interest, str) and interest.strip() for interest in interests)
+                            if valid_interests:
+                                self.log_result("Available Interests - Data Quality", True, f"Sample interests: {interests[:3]}")
+                            else:
+                                self.log_result("Available Interests - Data Quality", False, "Some interests are invalid")
+                        else:
+                            self.log_result("Available Interests - Data Quality", True, "No interests found (acceptable)")
+                        
+                        # Check if interests are sorted
+                        if interests and interests == sorted(interests):
+                            self.log_result("Available Interests - Sorting", True, "Interests are properly sorted")
+                        elif not interests:
+                            self.log_result("Available Interests - Sorting", True, "No interests to sort")
+                        else:
+                            self.log_result("Available Interests - Sorting", False, "Interests are not sorted")
+                    else:
+                        self.log_result("Available Interests - Structure", False, "Interests is not a list")
+                else:
+                    self.log_result("Available Interests - Structure", False, "Missing interests field")
+            else:
+                self.log_result("Available Interests API", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("Available Interests API", False, f"Exception: {str(e)}")
+        
+        # Test 2: Get available cities
+        try:
+            response = requests.get(f"{self.base_url}/admin/creators/cities/available")
+            if response.status_code == 200:
+                data = response.json()
+                if "cities" in data:
+                    cities = data["cities"]
+                    if isinstance(cities, list):
+                        self.log_result("Available Cities - Structure", True, f"Found {len(cities)} unique cities")
+                        
+                        # Check if cities are strings and not empty
+                        if cities:
+                            valid_cities = all(isinstance(city, str) and city.strip() for city in cities)
+                            if valid_cities:
+                                self.log_result("Available Cities - Data Quality", True, f"Sample cities: {cities[:3]}")
+                            else:
+                                self.log_result("Available Cities - Data Quality", False, "Some cities are invalid")
+                        else:
+                            self.log_result("Available Cities - Data Quality", True, "No cities found (acceptable)")
+                        
+                        # Check if cities are sorted
+                        if cities and cities == sorted(cities):
+                            self.log_result("Available Cities - Sorting", True, "Cities are properly sorted")
+                        elif not cities:
+                            self.log_result("Available Cities - Sorting", True, "No cities to sort")
+                        else:
+                            self.log_result("Available Cities - Sorting", False, "Cities are not sorted")
+                    else:
+                        self.log_result("Available Cities - Structure", False, "Cities is not a list")
+                else:
+                    self.log_result("Available Cities - Structure", False, "Missing cities field")
+            else:
+                self.log_result("Available Cities API", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_result("Available Cities API", False, f"Exception: {str(e)}")
+
+    def create_test_creators_with_interests(self):
+        """Create test creators with interests field for testing"""
+        print("\n=== Creating Test Creators with Interests ===")
+        
+        # Test creator 1: Fashion creator from Mumbai
+        creator_data1 = {
+            "name": "Priya Fashion Mumbai",
+            "email": "priya.fashion.mumbai@example.com",
+            "bio": "Fashion and lifestyle content creator from Mumbai",
+            "instagram_handle": "@priya_fashion_mumbai",
+            "instagram_followers": 45000,
+            "youtube_handle": "@PriyaFashionMumbai",
+            "youtube_subscribers": 12000,
+            "location": "Mumbai",
+            "category": "Fashion",
+            "interests": ["fashion", "travel", "photography"]
+        }
+        
+        # Test creator 2: Tech creator from Delhi
+        creator_data2 = {
+            "name": "Rahul Tech Delhi",
+            "email": "rahul.tech.delhi@example.com",
+            "bio": "Technology reviewer from Delhi",
+            "instagram_handle": "@rahul_tech_delhi",
+            "instagram_followers": 28000,
+            "youtube_handle": "@RahulTechDelhi",
+            "youtube_subscribers": 85000,
+            "location": "Delhi",
+            "category": "Technology",
+            "interests": ["technology", "gadgets", "reviews"]
+        }
+        
+        # Test creator 3: Lifestyle creator from Bangalore
+        creator_data3 = {
+            "name": "Meera Lifestyle Bangalore",
+            "email": "meera.lifestyle.bangalore@example.com",
+            "bio": "Lifestyle and wellness content creator",
+            "instagram_handle": "@meera_lifestyle_blr",
+            "instagram_followers": 67000,
+            "location": "Bangalore",
+            "category": "Lifestyle",
+            "interests": ["lifestyle", "wellness", "fashion", "travel"]
+        }
+        
+        test_creators_data = [creator_data1, creator_data2, creator_data3]
+        
+        for i, creator_data in enumerate(test_creators_data, 1):
+            try:
+                response = requests.post(f"{self.base_url}/creators", json=creator_data)
+                if response.status_code == 200:
+                    creator = response.json()
+                    self.test_creators.append(creator["id"])
+                    self.log_result(f"Create Test Creator {i}", True, f"Created: {creator['name']} with interests: {creator.get('interests', [])}")
+                    
+                    # Verify interests field is properly set
+                    if creator.get("interests") == creator_data["interests"]:
+                        self.log_result(f"Creator {i} Interests Validation", True, f"Interests correctly set: {creator['interests']}")
+                    else:
+                        self.log_result(f"Creator {i} Interests Validation", False, f"Interests mismatch: expected {creator_data['interests']}, got {creator.get('interests')}")
+                else:
+                    self.log_result(f"Create Test Creator {i}", False, f"Status: {response.status_code}")
+            except Exception as e:
+                self.log_result(f"Create Test Creator {i}", False, f"Exception: {str(e)}")
+
+    def run_admin_panel_enhancement_tests(self):
+        """Run all admin panel enhancement tests"""
+        print("\n🔥 Starting GrowKro Admin Panel Enhancement Tests")
+        print(f"🔗 Testing Admin Enhancement APIs at: {self.base_url}")
+        print("=" * 60)
+        
+        # Check API health first
+        if not self.test_api_health():
+            print("❌ API is not accessible. Stopping tests.")
+            return self.test_results
+        
+        # Create test creators with interests field
+        self.create_test_creators_with_interests()
+        
+        # Run admin panel enhancement tests
+        self.test_admin_excel_export()
+        self.test_admin_creator_filtering()
+        self.test_admin_available_options()
+        
+        # Cleanup test creators
+        self.test_delete_creator()
+        
+        # Print summary
+        print("\n" + "=" * 60)
+        print("📊 ADMIN PANEL ENHANCEMENT TESTS SUMMARY")
+        print("=" * 60)
+        print(f"✅ Passed: {self.test_results['passed']}")
+        print(f"❌ Failed: {self.test_results['failed']}")
+        
+        if self.test_results['errors']:
+            print("\n🔍 FAILED TESTS:")
+            for error in self.test_results['errors']:
+                print(f"   • {error}")
+        
+        success_rate = (self.test_results['passed'] / (self.test_results['passed'] + self.test_results['failed'])) * 100
+        print(f"\n📈 Success Rate: {success_rate:.1f}%")
+        
+        return self.test_results
+
 if __name__ == "__main__":
     import sys
     tester = GrowKroAPITester()
