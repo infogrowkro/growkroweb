@@ -1168,6 +1168,29 @@ async def export_creators_excel():
                 
             interests_str = ", ".join(creator_parsed.get("interests", [])) if creator_parsed.get("interests") else ""
             
+            # Handle datetime objects for Excel compatibility
+            created_at = creator_parsed.get("created_at", "")
+            updated_at = creator_parsed.get("updated_at", "")
+            
+            # Convert datetime objects to strings if needed
+            if isinstance(created_at, datetime):
+                created_at = created_at.replace(tzinfo=None).strftime("%Y-%m-%d %H:%M:%S")
+            elif isinstance(created_at, str) and created_at:
+                try:
+                    dt = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                    created_at = dt.replace(tzinfo=None).strftime("%Y-%m-%d %H:%M:%S")
+                except:
+                    pass
+            
+            if isinstance(updated_at, datetime):
+                updated_at = updated_at.replace(tzinfo=None).strftime("%Y-%m-%d %H:%M:%S")
+            elif isinstance(updated_at, str) and updated_at:
+                try:
+                    dt = datetime.fromisoformat(updated_at.replace('Z', '+00:00'))
+                    updated_at = dt.replace(tzinfo=None).strftime("%Y-%m-%d %H:%M:%S")
+                except:
+                    pass
+            
             row_data = [
                 creator_parsed.get("name", ""),
                 creator_parsed.get("email", ""),
@@ -1189,8 +1212,8 @@ async def export_creators_excel():
                 "Yes" if creator_parsed.get("verification_status") else "No",
                 creator_parsed.get("profile_status", ""),
                 creator_parsed.get("admin_notes", ""),
-                creator_parsed.get("created_at", ""),
-                creator_parsed.get("updated_at", "")
+                created_at,
+                updated_at
             ]
             
             for col, value in enumerate(row_data, 1):
