@@ -1129,6 +1129,214 @@ async def verify_otp(email: str, otp: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error verifying OTP: {str(e)}")
 
+# New Admin Panel Enhancements
+
+@app.get("/api/admin/creators/export")
+async def export_creators_excel():
+    """Export all creator data to Excel file"""
+    try:
+        # Fetch all creators
+        cursor = db.creators.find({})
+        creators = await cursor.to_list(length=None)
+        
+        # Create Excel workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "GrowKro Creators"
+        
+        # Define headers
+        headers = [
+            "Name", "Email", "Bio", "Location", "Category", "Interests",
+            "Instagram Handle", "Instagram Followers", "YouTube Handle", "YouTube Subscribers",
+            "Twitter Handle", "Twitter Followers", "TikTok Handle", "TikTok Followers",
+            "Snapchat Handle", "Snapchat Followers", "Highlight Package", "Verification Status",
+            "Profile Status", "Admin Notes", "Created At", "Updated At"
+        ]
+        
+        # Add headers with styling
+        for col, header in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col, value=header)
+            cell.font = Font(bold=True, color="FFFFFF")
+            cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Add data rows
+        for row, creator in enumerate(creators, 2):
+            creator_parsed = parse_from_mongo(creator)
+            if not creator_parsed:
+                continue
+                
+            interests_str = ", ".join(creator_parsed.get("interests", [])) if creator_parsed.get("interests") else ""
+            
+            row_data = [
+                creator_parsed.get("name", ""),
+                creator_parsed.get("email", ""),
+                creator_parsed.get("bio", ""),
+                creator_parsed.get("location", ""),
+                creator_parsed.get("category", ""),
+                interests_str,
+                creator_parsed.get("instagram_handle", ""),
+                creator_parsed.get("instagram_followers", 0),
+                creator_parsed.get("youtube_handle", ""),
+                creator_parsed.get("youtube_subscribers", 0),
+                creator_parsed.get("twitter_handle", ""),
+                creator_parsed.get("twitter_followers", 0),
+                creator_parsed.get("tiktok_handle", ""),
+                creator_parsed.get("tiktok_followers", 0),
+                creator_parsed.get("snapchat_handle", ""),
+                creator_parsed.get("snapchat_followers", 0),
+                creator_parsed.get("highlight_package", ""),
+                "Yes" if creator_parsed.get("verification_status") else "No",
+                creator_parsed.get("profile_status", ""),
+                creator_parsed.get("admin_notes", ""),
+                creator_parsed.get("created_at", ""),
+                creator_parsed.get("updated_at", "")
+            ]
+            
+            for col, value in enumerate(row_data, 1):
+                ws.cell(row=row, column=col, value=value)
+        
+        # Auto-adjust column widths
+        for column in ws.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min(max_length + 2, 30)
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Save to in-memory bytes buffer
+        excel_buffer = io.BytesIO()
+        wb.save(excel_buffer)
+        excel_buffer.seek(0)
+        
+        # Create streaming response
+        def generate():
+            yield excel_buffer.getvalue()
+        
+        headers = {
+            'Content-Disposition': f'attachment; filename="growkro_creators_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'
+        }
+        
+        return StreamingResponse(
+            io.BytesIO(excel_buffer.getvalue()),
+            media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            headers=headers
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error exporting creators: {str(e)}")
+
+@app.get("/api/admin/creators/filter")
+async def filter_creators(
+    city: Optional[str] = None,
+    interests: Optional[str] = None,
+    category: Optional[str] = None,
+    profile_status: Optional[str] = None,
+    limit: Optional[int] = 50,
+    skip: Optional[int] = 0
+):
+    """Filter creators by city and interests for admin panel"""
+    try:
+        filter_query = {}
+        
+        # Filter by city (using location field)
+        if city:
+            filter_query["location"] = {"$regex": city, "$options": "i"}
+        
+        # Filter by interests (array field)
+        if interests:
+            interest_list = [interest.strip() for interest in interests.split(",")]
+            filter_query["interests"] = {"$in": interest_list}
+        
+        # Filter by category
+        if category:
+            filter_query["category"] = {"$regex": category, "$options": "i"}
+        
+        # Filter by profile status
+        if profile_status:
+            filter_query["profile_status"] = profile_status
+        
+        # Count total matching creators
+        total_count = await db.creators.count_documents(filter_query)
+        
+        # Get filtered creators with pagination
+        cursor = db.creators.find(filter_query).skip(skip).limit(limit).sort("created_at", -1)
+        creators = await cursor.to_list(length=limit)
+        
+        # Parse creators
+        parsed_creators = []
+        for creator in creators:
+            creator_parsed = parse_from_mongo(creator)
+            if creator_parsed:
+                parsed_creators.append(Creator(**creator_parsed))
+        
+        return {
+            "creators": parsed_creators,
+            "total_count": total_count,
+            "page_info": {
+                "limit": limit,
+                "skip": skip,
+                "has_more": (skip + limit) < total_count
+            },
+            "filters_applied": {
+                "city": city,
+                "interests": interests,
+                "category": category,
+                "profile_status": profile_status
+            }
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error filtering creators: {str(e)}")
+
+@app.get("/api/admin/creators/interests/available")
+async def get_available_interests():
+    """Get all unique interests across all creators for filter dropdown"""
+    try:
+        # Use MongoDB aggregation to get unique interests
+        pipeline = [
+            {"$unwind": "$interests"},
+            {"$group": {"_id": "$interests"}},
+            {"$match": {"_id": {"$ne": None, "$ne": ""}}},
+            {"$sort": {"_id": 1}}
+        ]
+        
+        cursor = db.creators.aggregate(pipeline)
+        interests = await cursor.to_list(length=None)
+        
+        interest_list = [interest["_id"] for interest in interests if interest["_id"]]
+        
+        return {"interests": interest_list}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching interests: {str(e)}")
+
+@app.get("/api/admin/creators/cities/available")
+async def get_available_cities():
+    """Get all unique cities across all creators for filter dropdown"""
+    try:
+        # Use MongoDB aggregation to get unique locations
+        pipeline = [
+            {"$group": {"_id": "$location"}},
+            {"$match": {"_id": {"$ne": None, "$ne": ""}}},
+            {"$sort": {"_id": 1}}
+        ]
+        
+        cursor = db.creators.aggregate(pipeline)
+        locations = await cursor.to_list(length=None)
+        
+        city_list = [location["_id"] for location in locations if location["_id"]]
+        
+        return {"cities": city_list}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching cities: {str(e)}")
+
 # Business Owners Section (Brand Collaboration)
 @app.post("/api/business-owners", response_model=BusinessOwner)
 async def create_business_owner(business_data: BusinessOwnerCreate):
