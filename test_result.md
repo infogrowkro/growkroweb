@@ -387,11 +387,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Updated Highlight Packages System"
-    - "Instagram Follower Validation System"
-    - "Updated Package Pricing API"
-    - "Creators by Package Endpoint"
-    - "Annual Subscription Duration"
+    - "Creator Data Excel Export"
+    - "Creator List Filtering by City and Interests"
+    - "Available Interests and Cities API"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
