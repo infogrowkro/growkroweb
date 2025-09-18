@@ -241,6 +241,7 @@ const AdminPanel = ({ onClose }) => {
     switch (tab) {
       case 'users':
         fetchPendingCreators();
+        fetchAvailableOptions();
         break;
       case 'financial':
         fetchTransactions();
