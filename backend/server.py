@@ -88,6 +88,7 @@ class CreatorCreate(BaseModel):
     snapchat_followers: Optional[int] = 0
     location: Optional[str] = ""
     category: Optional[str] = ""
+    interests: Optional[List[str]] = []
 
 class CreatorUpdate(BaseModel):
     name: Optional[str] = None
