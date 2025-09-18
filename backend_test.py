@@ -1681,8 +1681,10 @@ if __name__ == "__main__":
             results = tester.run_enhanced_admin_tests()
         elif sys.argv[1] == "enhanced":
             results = tester.run_all_enhanced_tests()
+        elif sys.argv[1] == "admin_enhancements":
+            results = tester.run_admin_panel_enhancement_tests()
         else:
             results = tester.run_all_tests()
     else:
-        # Default to enhanced tests for comprehensive testing
-        results = tester.run_all_enhanced_tests()
+        # Default to admin panel enhancement tests for current testing focus
+        results = tester.run_admin_panel_enhancement_tests()
