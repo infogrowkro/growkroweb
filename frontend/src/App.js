@@ -1075,8 +1075,8 @@ function App() {
               <ul>
                 <li>Help Center</li>
                 <li>Contact Us</li>
-                <li>WhatsApp: +91 99999 99999</li>
-                <li>Email: hello@growkro.com</li>
+                <li>WhatsApp: +91 8888 964 964</li>
+                <li>Email: info@growkroindia.com</li>
               </ul>
             </div>
           </div>
