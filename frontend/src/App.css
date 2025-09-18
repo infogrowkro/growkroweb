@@ -379,6 +379,28 @@ body {
   font-size: 1.8rem;
   margin-bottom: 1rem;
   color: #333;
+  font-weight: 700;
+}
+
+.pricing-card.silver .pricing-header h3 {
+  background: linear-gradient(135deg, #C0C0C0, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pricing-card.gold .pricing-header h3 {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pricing-card.platinum .pricing-header h3 {
+  background: linear-gradient(135deg, #E5E4E2, #999);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .price {
