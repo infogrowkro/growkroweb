@@ -386,10 +386,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Creator Data Excel Export"
-    - "Creator List Filtering by City and Interests"
-    - "Available Interests and Cities API"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
