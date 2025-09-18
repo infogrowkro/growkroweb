@@ -18,6 +18,19 @@ const AdminPanel = ({ onClose }) => {
   const [contentReports, setContentReports] = useState({});
   const [analyticsData, setAnalyticsData] = useState({});
   const [notificationHistory, setNotificationHistory] = useState([]);
+  
+  // New states for filtering and export
+  const [filteredCreators, setFilteredCreators] = useState([]);
+  const [availableInterests, setAvailableInterests] = useState([]);
+  const [availableCities, setAvailableCities] = useState([]);
+  const [filterForm, setFilterForm] = useState({
+    city: '',
+    interests: '',
+    category: '',
+    profile_status: ''
+  });
+  const [showAllCreators, setShowAllCreators] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
 
   // Notification form state
   const [notificationForm, setNotificationForm] = useState({
