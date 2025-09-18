@@ -360,7 +360,16 @@ const AdminPanel = ({ onClose }) => {
           {/* User Management */}
           {activeTab === 'users' && (
             <div className="user-management">
-              <h3>User Management</h3>
+              <div className="user-management-header">
+                <h3>User Management</h3>
+                <button 
+                  className="export-btn"
+                  onClick={handleExportCreators}
+                  disabled={exportLoading}
+                >
+                  {exportLoading ? '📊 Exporting...' : '📊 Export to Excel'}
+                </button>
+              </div>
               
               <div className="user-stats-grid">
                 <div className="stat-card">
@@ -384,6 +393,130 @@ const AdminPanel = ({ onClose }) => {
                   <div className="stat-label">Suspended</div>
                 </div>
               </div>
+
+              {/* Creator Filtering Section */}
+              <div className="creator-filtering">
+                <h4>🔍 Filter Creators</h4>
+                <div className="filter-form">
+                  <div className="filter-row">
+                    <div className="filter-group">
+                      <label>City:</label>
+                      <select
+                        value={filterForm.city}
+                        onChange={(e) => setFilterForm({...filterForm, city: e.target.value})}
+                        className="filter-select"
+                      >
+                        <option value="">All Cities</option>
+                        {availableCities.map((city) => (
+                          <option key={city} value={city}>{city}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div className="filter-group">
+                      <label>Interests:</label>
+                      <select
+                        value={filterForm.interests}
+                        onChange={(e) => setFilterForm({...filterForm, interests: e.target.value})}
+                        className="filter-select"
+                      >
+                        <option value="">All Interests</option>
+                        {availableInterests.map((interest) => (
+                          <option key={interest} value={interest}>{interest}</option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div className="filter-group">
+                      <label>Category:</label>
+                      <input
+                        type="text"
+                        value={filterForm.category}
+                        onChange={(e) => setFilterForm({...filterForm, category: e.target.value})}
+                        placeholder="e.g., fashion, tech"
+                        className="filter-input"
+                      />
+                    </div>
+                    
+                    <div className="filter-group">
+                      <label>Status:</label>
+                      <select
+                        value={filterForm.profile_status}
+                        onChange={(e) => setFilterForm({...filterForm, profile_status: e.target.value})}
+                        className="filter-select"
+                      >
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="suspended">Suspended</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="filter-actions">
+                    <button onClick={handleFilterSubmit} className="filter-btn apply">
+                      🔍 Apply Filters
+                    </button>
+                    <button onClick={handleFilterReset} className="filter-btn reset">
+                      🔄 Reset Filters
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Filtered Creators Results */}
+              {showAllCreators && (
+                <div className="filtered-creators">
+                  <h4>📋 All Creators ({filteredCreators.length} found)</h4>
+                  {filteredCreators.length > 0 ? (
+                    <div className="all-creators-list">
+                      {filteredCreators.map((creator) => (
+                        <div key={creator.id} className="creator-card-compact">
+                          <div className="creator-main-info">
+                            <div className="creator-name-status">
+                              <h5>{creator.name}</h5>
+                              <span className={`status-badge ${creator.profile_status}`}>
+                                {creator.profile_status}
+                              </span>
+                            </div>
+                            <p className="creator-details">
+                              {creator.email} • {creator.category} • {creator.location}
+                            </p>
+                            {creator.interests && creator.interests.length > 0 && (
+                              <p className="creator-interests">
+                                <strong>Interests:</strong> {creator.interests.join(', ')}
+                              </p>
+                            )}
+                          </div>
+                          <div className="creator-social-compact">
+                            {creator.instagram_handle && (
+                              <span className="admin-social-stat-compact">
+                                <FontAwesomeIcon icon={faInstagram} style={{color: '#E4405F'}} />
+                                {creator.instagram_followers.toLocaleString()}
+                              </span>
+                            )}
+                            {creator.youtube_handle && (
+                              <span className="admin-social-stat-compact">
+                                <FontAwesomeIcon icon={faYoutube} style={{color: '#FF0000'}} />
+                                {creator.youtube_subscribers.toLocaleString()}
+                              </span>
+                            )}
+                            {creator.twitter_handle && (
+                              <span className="admin-social-stat-compact">
+                                <FontAwesomeIcon icon={faTwitter} style={{color: '#1DA1F2'}} />
+                                {creator.twitter_followers.toLocaleString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="no-results">No creators found matching the filters</div>
+                  )}
+                </div>
+              )}
 
               <h4>Pending Approvals</h4>
               {pendingCreators.length > 0 ? (
