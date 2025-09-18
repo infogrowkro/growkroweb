@@ -309,6 +309,8 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-top: 3rem;
+  position: relative;
+  z-index: 2;
 }
 
 .pricing-card {
