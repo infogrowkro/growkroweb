@@ -105,6 +105,7 @@ class CreatorUpdate(BaseModel):
     snapchat_followers: Optional[int] = None
     location: Optional[str] = None
     category: Optional[str] = None
+    interests: Optional[List[str]] = None
     profile_picture: Optional[str] = None
 
 class AdminAction(BaseModel):
