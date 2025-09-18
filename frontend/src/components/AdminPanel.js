@@ -117,6 +117,84 @@ const AdminPanel = ({ onClose }) => {
     }
   };
 
+  const fetchFilteredCreators = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (filterForm.city) params.append('city', filterForm.city);
+      if (filterForm.interests) params.append('interests', filterForm.interests);
+      if (filterForm.category) params.append('category', filterForm.category);
+      if (filterForm.profile_status) params.append('profile_status', filterForm.profile_status);
+      params.append('limit', '100');
+
+      const response = await fetch(`${BACKEND_URL}/api/admin/creators/filter?${params.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setFilteredCreators(data.creators);
+      }
+    } catch (error) {
+      console.error('Error fetching filtered creators:', error);
+    }
+  };
+
+  const fetchAvailableOptions = async () => {
+    try {
+      const [interestsResponse, citiesResponse] = await Promise.all([
+        fetch(`${BACKEND_URL}/api/admin/creators/interests/available`),
+        fetch(`${BACKEND_URL}/api/admin/creators/cities/available`)
+      ]);
+
+      if (interestsResponse.ok) {
+        const interestsData = await interestsResponse.json();
+        setAvailableInterests(interestsData.interests || []);
+      }
+
+      if (citiesResponse.ok) {
+        const citiesData = await citiesResponse.json();
+        setAvailableCities(citiesData.cities || []);
+      }
+    } catch (error) {
+      console.error('Error fetching available options:', error);
+    }
+  };
+
+  const handleExportCreators = async () => {
+    try {
+      setExportLoading(true);
+      const response = await fetch(`${BACKEND_URL}/api/admin/creators/export`);
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `growkro_creators_${new Date().toISOString().slice(0, 10)}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        alert('Creator data exported successfully!');
+      } else {
+        alert('Failed to export creator data');
+      }
+    } catch (error) {
+      console.error('Error exporting creators:', error);
+      alert('Error exporting creator data');
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  const handleFilterSubmit = () => {
+    fetchFilteredCreators();
+    setShowAllCreators(true);
+  };
+
+  const handleFilterReset = () => {
+    setFilterForm({ city: '', interests: '', category: '', profile_status: '' });
+    setFilteredCreators([]);
+    setShowAllCreators(false);
+  };
+
   const handleCreatorAction = async (creatorId, action, notes = '') => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/admin/creators/${creatorId}/approve`, {
