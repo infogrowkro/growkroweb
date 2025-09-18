@@ -64,6 +64,7 @@ class Creator(BaseModel):
     profile_picture: Optional[str] = ""
     location: Optional[str] = ""
     category: Optional[str] = ""  # fashion, tech, lifestyle, food, etc.
+    interests: Optional[List[str]] = []  # Array of interests like ["fashion", "travel", "photography"]
     # Admin Management Fields
     profile_status: str = "pending"  # pending, approved, rejected, suspended
     admin_notes: Optional[str] = ""
